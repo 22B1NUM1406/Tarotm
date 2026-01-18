@@ -1143,16 +1143,7 @@ const TarotApp = () => {
                     </div>
                   </div>
                   
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
-                      <span>✅</span>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-white mb-1">Аудио/Видео яриа</h4>
-                      <p className="text-purple-300 text-sm">Шууд харилцан яриа, асуулт асуух боломж</p>
-                    </div>
-                  </div>
-                  
+                
                   <div className="flex items-start gap-3">
                     <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
                       <span>✅</span>
