@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useEffect } from 'react'
 import { Notebook } from "lucide-react";
 import axios from 'axios'
+
 import toast from 'react-hot-toast'
 import {Link} from 'react-router-dom'
 import api from '../lib/axios.js'
@@ -40,7 +41,7 @@ const HomePage = () => {
           </Link>
         </div>}
         {notes.length>0 &&(
-          <div className='grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+          <div className='grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
             {notes.map((note)=>(
               <NotePage key={note._id} note={note} setNotes={setNotes} />
             ))}
