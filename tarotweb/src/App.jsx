@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Moon, Star, Heart, Briefcase, DollarSign, Activity,MapPin , Twitter, Sparkles,Phone, ArrowLeft, LogOut, RotateCcw, Check, Home, Book, FileText, User, ExternalLink, Facebook, Instagram, Mail, ChevronRight, Loader2 } from 'lucide-react';
+import { Moon,Star,Heart, Briefcase, DollarSign, Activity,MapPin , Twitter, Sparkles,Phone, ArrowLeft, LogOut, RotateCcw, Check, Home, Book, FileText, User, ExternalLink, Facebook, Instagram, Mail, ChevronRight, Loader2, NewspaperIcon, Copy } from 'lucide-react';
 
 // Firebase imports
 import { initializeApp } from 'firebase/app';
@@ -1139,8 +1139,9 @@ const [authLoading, setAuthLoading] = useState(false); // Firebase loading state
 
             {/* Нүүр хуудасны мэдээ, блог хэсэг */}
             <div className="max-w-7xl mx-auto px-4 py-8">
-              <h2 className="text-3xl font-serif font-bold mb-6 text-purple-300 text-center">
-                📰 Сүүлийн үеийн мэдээ, блогууд
+              <h2 className="text-3xl font-serif font-bold mb-6 text-purple-300 flex items-center justify-center">
+               <NewspaperIcon className='mr-2 size-10' />
+              Сүүлийн үеийн мэдээ, блогууд
               </h2>
               <NewsBlogsSection activeTab={activeTab} setActiveTab={setActiveTab} onArticleClick={handleArticleClick} />
             </div>
@@ -1316,7 +1317,7 @@ const [authLoading, setAuthLoading] = useState(false); // Firebase loading state
     </div>
 
     <div className="text-center">
-      <button
+      <button 
         onClick={() => {
           setSelectedCards([]);
           const shuffled = [...TAROT_CARDS].sort(() => Math.random() - 0.5);
@@ -1565,9 +1566,9 @@ const [authLoading, setAuthLoading] = useState(false); // Firebase loading state
           navigator.clipboard.writeText(result);
           showMessage('success', '✅ Үр дүн хуулагдлаа!');
         }}
-        className="px-8 py-4 bg-purple-500/20 border-2 border-purple-500 rounded-xl font-semibold text-lg hover:bg-purple-500/30 hover:-translate-y-0.5 transition-all"
+        className="flex items-center px-8 py-4 bg-purple-500/20 border-2 border-purple-500 rounded-xl font-semibold text-lg hover:bg-purple-500/30 hover:-translate-y-0.5 transition-all"
       >
-        📋 Үр дүн хуулах
+        <Copy className='mr-1'/> Үр дүн хуулах
       </button>
     </div>
 
