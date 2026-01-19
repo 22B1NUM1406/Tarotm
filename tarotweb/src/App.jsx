@@ -31,49 +31,270 @@ const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 // Tarot Cards Data
 const TAROT_CARDS = [
-  { id: 0, name: 'The Fool', mongolian: 'Тэнэг', meaning: 'Шинэ эхлэл, эрсдэлд зоригтой орох, итгэл найдвараар дүүрэн алхам', symbol: '🌟', color: 'from-yellow-400 to-yellow-600' },
-
-  { id: 1, name: 'The Magician', mongolian: 'Илбэчин', meaning: 'Өөрийн чадвар боломжоо ашиглах, зорилгоо бодит болгох, санаачилга', symbol: '🎩', color: 'from-purple-600 to-indigo-800' },
-
-  { id: 2, name: 'The High Priestess', mongolian: 'Дээд санваартан эмэгтэй', meaning: 'Дотоод мэдрэмж, нуугдмал үнэн, чимээгүй мэргэн ухаан', symbol: '🌙', color: 'from-blue-800 to-indigo-900' },
-
-  { id: 3, name: 'The Empress', mongolian: 'Хатан эх', meaning: 'Өгөөмөр сэтгэл, үржил шим, хайр халамж, элбэг дэлбэг байдал', symbol: '👑', color: 'from-green-500 to-green-700' },
-
-  { id: 4, name: 'The Emperor', mongolian: 'Эзэн хаан', meaning: 'Дэг журам, хариуцлага, тогтвортой байдал, манлайлал', symbol: '⚡', color: 'from-red-700 to-red-900' },
-
-  { id: 5, name: 'The Hierophant', mongolian: 'Их багш', meaning: 'Уламжлал, сургааль номлол, ёс заншил, итгэл үнэмшил', symbol: '📿', color: 'from-purple-700 to-purple-900' },
-
-  { id: 6, name: 'The Lovers', mongolian: 'Хосууд', meaning: 'Хайр дурлал, сэтгэлийн холбоо, чухал сонголт', symbol: '💞', color: 'from-pink-500 to-rose-600' },
-
-  { id: 7, name: 'The Chariot', mongolian: 'Тэрэг', meaning: 'Зорилгодоо тууштай зүтгэх, ялалт, өөрийгөө хянах чадвар', symbol: '🏇', color: 'from-blue-600 to-blue-800' },
-
-  { id: 8, name: 'Strength', mongolian: 'Хүч', meaning: 'Дотоод тэнхээ, зөөлөн зориг, тэвчээр, өөрийгөө ялах', symbol: '🦁', color: 'from-orange-500 to-orange-700' },
-
-  { id: 9, name: 'The Hermit', mongolian: 'Даяанч', meaning: 'Ганцаардал дунд эргэцүүлэх, үнэнийг эрэх, дотоод гэгээрэл', symbol: '🕯️', color: 'from-gray-600 to-gray-800' },
-
-  { id: 10, name: 'Wheel of Fortune', mongolian: 'Хувь заяаны хүрд', meaning: 'Хувь заяаны эргэлт, гэнэтийн өөрчлөлт, боломж', symbol: '☸️', color: 'from-yellow-600 to-amber-700' },
-
-  { id: 11, name: 'Justice', mongolian: 'Шударга ёс', meaning: 'Шударга шийдвэр, үнэнтэй нүүр тулах, хариуцлагын үр дагавар', symbol: '⚖️', color: 'from-green-700 to-green-900' },
-
-  { id: 12, name: 'The Hanged Man', mongolian: 'Дүүжлэгдсэн хүн', meaning: 'Өөр өнцгөөс харах, хүлээлт, ухамсрын өөрчлөлт', symbol: '🔄', color: 'from-blue-500 to-blue-700' },
-
-  { id: 13, name: 'Death', mongolian: 'Үхэл', meaning: 'Хуучин үеийн төгсгөл, зайлшгүй өөрчлөлт, шинэ эхлэл', symbol: '💀', color: 'from-gray-800 to-black' },
-
-  { id: 14, name: 'Temperance', mongolian: 'Тэнцвэр', meaning: 'Зохицол, дундаж зам, тайван ухаан', symbol: '🌈', color: 'from-sky-400 to-sky-600' },
-
-  { id: 15, name: 'The Devil', mongolian: 'Чөтгөр', meaning: 'Донтолт, хүлээс, буруу зуршилд баригдах', symbol: '😈', color: 'from-red-800 to-red-950' },
-
-  { id: 16, name: 'The Tower', mongolian: 'Цамхаг', meaning: 'Гэнэтийн нуранги, худал үнэн задрах, огцом өөрчлөлт', symbol: '⚡', color: 'from-red-600 to-red-800' },
-
-  { id: 17, name: 'The Star', mongolian: 'Од', meaning: 'Итгэл найдвар, эдгэрэл, сэтгэлийн гэрэл', symbol: '⭐', color: 'from-cyan-400 to-cyan-600' },
-
-  { id: 18, name: 'The Moon', mongolian: 'Сар', meaning: 'Төөрөгдөл, далд айдас, тодорхой бус байдал', symbol: '🌙', color: 'from-indigo-700 to-indigo-900' },
-
-  { id: 19, name: 'The Sun', mongolian: 'Нар', meaning: 'Аз жаргал, амжилт, ил тод байдал, эрч хүч', symbol: '☀️', color: 'from-yellow-400 to-orange-500' },
-
-  { id: 20, name: 'Judgement', mongolian: 'Сэрэхүй', meaning: 'Өнгөрснийг дүгнэх, шинэ ухамсар, дахин төрөх', symbol: '📯', color: 'from-purple-500 to-purple-700' },
-
-  { id: 21, name: 'The World', mongolian: 'Дэлхий', meaning: 'Бүрэн төгс байдал, амжилтын оргил, нэг мөчлөгийн төгсгөл', symbol: '🌍', color: 'from-green-600 to-green-800' }
+  {
+    id: 0,
+    name: 'The Fool',
+    mongolian: 'Тэнэг',
+    symbol: '🌟',
+    color: 'from-yellow-400 to-yellow-600',
+    positionMeanings: {
+      past: 'Өнгөрсөнд та шинэ эхлэл, боломжуудыг эрэлхийлж, туршлага хуримтлуулсан.',
+      present: 'Одоо таны дотоод мэдрэмж нээлттэй, шинэ алхам хийхэд бэлэн байна.',
+      future: 'Ирээдүйд шинэ боломжууд нээгдэж, эрсдэлд орохдоо өөртөө итгэлтэй байх хэрэгтэй.'
+    }
+  },
+  {
+    id: 1,
+    name: 'The Magician',
+    mongolian: 'Илбэчин',
+    symbol: '🎩',
+    color: 'from-purple-600 to-indigo-800',
+    positionMeanings: {
+      past: 'Өнгөрсөнд та чадвар, ур чадвараа ашиглан зорилгодоо хүрсэн.',
+      present: 'Одоо таны бүтээлч энерги идэвхтэй, боломжуудыг ашиглахад бэлэн байна.',
+      future: 'Ирээдүйд таны чадварууд амжилтанд хүрэх түлхүүр болох бөгөөд шинэ санааг хэрэгжүүлнэ.'
+    }
+  },
+  {
+    id: 2,
+    name: 'The High Priestess',
+    mongolian: 'Тэргүүн Санваартан',
+    symbol: '🌙',
+    color: 'from-blue-800 to-indigo-900',
+    positionMeanings: {
+      past: 'Өнгөрсөнд та дотоод мэдлэгээ хөгжүүлж, өөрийгөө ойлгосон.',
+      present: 'Одоо таны дотоод мэдрэмж хүчтэй, нууц мэдээллийг ойлгоход туслана.',
+      future: 'Ирээдүйд дотоод мэдрэмжээ дагаж, зөв сонголт хийх боломж гарна.'
+    }
+  },
+  {
+    id: 3,
+    name: 'The Empress',
+    mongolian: 'Хатан хаан',
+    symbol: '👑',
+    color: 'from-green-500 to-green-700',
+    positionMeanings: {
+      past: 'Өнгөрсөнд та бүтээлч байдал, халамж, харилцаанд анхаарал тавьсан.',
+      present: 'Одоо таны бүтээлч энерги, амьдралд элбэг дэлбэг байдлыг бий болгож байна.',
+      future: 'Ирээдүйд шинэ бүтээлч санаа, амжилт, элбэг дэлбэг боломжууд нээгдэнэ.'
+    }
+  },
+  {
+    id: 4,
+    name: 'The Emperor',
+    mongolian: 'Эзэн хаан',
+    symbol: '⚡',
+    color: 'from-red-700 to-red-900',
+    positionMeanings: {
+      past: 'Өнгөрсөнд та дэг журам, бүтэц зохион байгуулалттай байсан.',
+      present: 'Одоо таны шийдвэрлэх чадвар, хяналт идэвхтэй ажиллаж байна.',
+      future: 'Ирээдүйд зорилгодоо хүрэхийн тулд тогтвортой байдал, удирдах чадвараа ашиглах хэрэгтэй.'
+    }
+  },
+  {
+    id: 5,
+    name: 'The Hierophant',
+    mongolian: 'Лам',
+    symbol: '📿',
+    color: 'from-purple-700 to-purple-900',
+    positionMeanings: {
+      past: 'Өнгөрсөнд та уламжлал, сургамжийг дагаж, туршлага хуримтлуулсан.',
+      present: 'Одоо итгэл үнэмшил, зарчим танд чиглэлийг өгч байна.',
+      future: 'Ирээдүйд зөв шийдвэр гаргахын тулд үнэт зүйлсээ дагах хэрэгтэй.'
+    }
+  },
+  {
+    id: 6,
+    name: 'The Lovers',
+    mongolian: 'Дурлагчид',
+    symbol: '💞',
+    color: 'from-pink-500 to-rose-600',
+    positionMeanings: {
+      past: 'Өнгөрсөнд хайр, харилцааны шийдвэрүүдийг гаргасан.',
+      present: 'Одоо харилцаа, сонголтод анхаарал шаардлагатай.',
+      future: 'Ирээдүйд чухал шийдвэр гарч магадгүй, харилцаа болон үнэт зүйлсийг эргэн хар.'
+    }
+  },
+  {
+    id: 7,
+    name: 'The Chariot',
+    mongolian: 'Тэрэг',
+    symbol: '🏇',
+    color: 'from-blue-600 to-blue-800',
+    positionMeanings: {
+      past: 'Өнгөрсөнд зорилгодоо хүрэхийн тулд хүч чармайлт гаргасан.',
+      present: 'Одоо зорилго руу тэмүүлэх хүч, хяналт идэвхтэй байна.',
+      future: 'Ирээдүйд зоригтой алхамууд амжилтыг тодорхойлно.'
+    }
+  },
+  {
+    id: 8,
+    name: 'Strength',
+    mongolian: 'Хүч',
+    symbol: '🦁',
+    color: 'from-orange-500 to-orange-700',
+    positionMeanings: {
+      past: 'Өнгөрсөнд тэвчээр, хүч чадлаар сорилтуудыг давсан.',
+      present: 'Одоо дотоод хүч, тэвчээр голлон ажиллаж байна.',
+      future: 'Ирээдүйд сорилттой тулгарах үед дотоод хүчээ ашиглан амжилтанд хүрнэ.'
+    }
+  },
+  {
+    id: 9,
+    name: 'The Hermit',
+    mongolian: 'Даяанч',
+    symbol: '🕯️',
+    color: 'from-gray-600 to-gray-800',
+    positionMeanings: {
+      past: 'Өнгөрсөнд та дотоод ухамсар, гүн бодолд анхаарсан.',
+      present: 'Одоо дотоод чимээг сонсож, зөв шийдвэр гаргах боломжтой.',
+      future: 'Ирээдүйд дотоод мэдлэгээ дагаж, зөв замаар алхах боломж гарна.'
+    }
+  },
+  {
+    id: 10,
+    name: 'Wheel of Fortune',
+    mongolian: 'Хувь заяаны хүрд',
+    symbol: '☸️',
+    color: 'from-yellow-600 to-amber-700',
+    positionMeanings: {
+      past: 'Өнгөрсөнд хувь заяаны мөчлөгт таарсан туршлагуудыг хуримтлуулсан.',
+      present: 'Одоо хувь заяаны боломжууд нээлттэй байна.',
+      future: 'Ирээдүйд тохиолдох боломжууд таны сонголтоос хамаарна.'
+    }
+  },
+  {
+    id: 11,
+    name: 'Justice',
+    mongolian: 'Шударга ёс',
+    symbol: '⚖️',
+    color: 'from-green-700 to-green-900',
+    positionMeanings: {
+      past: 'Өнгөрсөнд та шударга байдал, үнэн, хариуцлагыг эрхэмлэж байсан.',
+      present: 'Одоо шийдвэр гаргахдаа шударга байдал чухал байна.',
+      future: 'Ирээдүйд зөв шийдвэр гаргах нь үр дүнг тодорхойлно.'
+    }
+  },
+  {
+    id: 12,
+    name: 'The Hanged Man',
+    mongolian: 'Дүүжлэгдсэн хүн',
+    symbol: '🔄',
+    color: 'from-blue-500 to-blue-700',
+    positionMeanings: {
+      past: 'Өнгөрсөнд та асуудлыг өөр өнцгөөс харах шаардлагатай болсон.',
+      present: 'Одоо дотоод тэвчээр, тэсвэр тэвчээ шаардсан нөхцөл байна.',
+      future: 'Ирээдүйд шинэ ойлголт, гэгээрэлд хүрэх боломж гарна.'
+    }
+  },
+  {
+    id: 13,
+    name: 'Death',
+    mongolian: 'Үхэл',
+    symbol: '💀',
+    color: 'from-gray-800 to-black',
+    positionMeanings: {
+      past: 'Өнгөрсөнд төгсгөл, өөрчлөлт гарсан.',
+      present: 'Одоо шинэчлэл, өөрчлөлт эхэлж байна.',
+      future: 'Ирээдүйд шинэ эхлэл, шинэ боломжууд үүснэ.'
+    }
+  },
+  {
+    id: 14,
+    name: 'Temperance',
+    mongolian: 'Даруу байдал',
+    symbol: '🌈',
+    color: 'from-sky-400 to-sky-600',
+    positionMeanings: {
+      past: 'Өнгөрсөнд тэнцвэр, эв найрамдлыг эрхэмлэж байсан.',
+      present: 'Одоо дотоод болон гадаад энергийн тэнцвэр чухал байна.',
+      future: 'Ирээдүйд тэнцвэртэй, зохистой алхам амжилтанд хүргэнэ.'
+    }
+  },
+  {
+    id: 15,
+    name: 'The Devil',
+    mongolian: 'Чөтгөр',
+    symbol: '😈',
+    color: 'from-red-800 to-red-950',
+    positionMeanings: {
+      past: 'Өнгөрсөнд хязгаарлалт, муу зуршлуудад өртсөн.',
+      present: 'Одоо та эрх чөлөө, хяналтыг эргэн харах хэрэгтэй.',
+      future: 'Ирээдүйд сөрөг зуршлуудыг даван туулж боломжуудыг ашиглана.'
+    }
+  },
+  {
+    id: 16,
+    name: 'The Tower',
+    mongolian: 'Цамхаг',
+    symbol: '⚡',
+    color: 'from-red-600 to-red-800',
+    positionMeanings: {
+      past: 'Өнгөрсөнд гэнэтийн өөрчлөлт, уналт тохиолдсон.',
+      present: 'Одоо шинэ нөхцөлд дасан зохицох шаардлагатай байна.',
+      future: 'Ирээдүйд эрс өөрчлөлт шинэ боломжуудыг авчирна.'
+    }
+  },
+  {
+    id: 17,
+    name: 'The Star',
+    mongolian: 'Од',
+    symbol: '⭐',
+    color: 'from-cyan-400 to-cyan-600',
+    positionMeanings: {
+      past: 'Өнгөрсөнд итгэл найдвар, сэргэлттэй байсан.',
+      present: 'Одоо сэтгэл санаа болон зорилгын энерги хүчтэй байна.',
+      future: 'Ирээдүйд итгэл найдвар, шинэ боломж, урам зориг гарч ирнэ.'
+    }
+  },
+  {
+    id: 18,
+    name: 'The Moon',
+    mongolian: 'Сар',
+    symbol: '🌙',
+    color: 'from-indigo-700 to-indigo-900',
+    positionMeanings: {
+      past: 'Өнгөрсөнд төөрөл, айдас, тодорхой бус нөхцөл байдал гарсан.',
+      present: 'Одоо дотоод санаа, мэдрэмжээ сонсох цаг иржээ.',
+      future: 'Ирээдүйд анхааралгүй сонголт төөрөлдөх эрсдэлтэй.'
+    }
+  },
+  {
+    id: 19,
+    name: 'The Sun',
+    mongolian: 'Нар',
+    symbol: '☀️',
+    color: 'from-yellow-400 to-orange-500',
+    positionMeanings: {
+      past: 'Өнгөрсөнд амжилт, баяр баясгалан мэдэрсэн.',
+      present: 'Одоо эрч хүч, идэвхтэй байдал давамгайлж байна.',
+      future: 'Ирээдүйд амжилт, баяр баясгалан, шинэ боломж гарч ирнэ.'
+    }
+  },
+  {
+    id: 20,
+    name: 'Judgement',
+    mongolian: 'Шүүлт',
+    symbol: '📯',
+    color: 'from-purple-500 to-purple-700',
+    positionMeanings: {
+      past: 'Өнгөрсөнд үнэлгээ, өөрийн үйлдлийг дүгнэх үе ирсэн.',
+      present: 'Одоо өөрчлөлт, дахин төрөлт, шийдвэр гаргах цаг.',
+      future: 'Ирээдүйд өмнөх туршлагаас суралцаж, шинэ эхлэл хийх боломж.'
+    }
+  },
+  {
+    id: 21,
+    name: 'The World',
+    mongolian: 'Дэлхий',
+    symbol: '🌍',
+    color: 'from-green-600 to-green-800',
+    positionMeanings: {
+      past: 'Өнгөрсөнд амжилт, дүгнэлт, туршлага хуримтлуулсан.',
+      present: 'Одоо бүтэн байдал, амжилт, бүтээлч байдал давамгайлж байна.',
+      future: 'Ирээдүйд зорилгодоо хүрч, шинэ боломж, дуусгавар байдлыг мэдрэх болно.'
+    }
+  }
 ];
 
 
@@ -1026,316 +1247,332 @@ const [authLoading, setAuthLoading] = useState(false); // Firebase loading state
 
         {/* Cards Selection Page */}
         {currentPage === 'cards' && (
-          <div className="max-w-7xl mx-auto px-4 py-20">
-            <div className="text-center mb-8">
-              <h2 className="text-4xl font-serif font-bold mb-4 text-purple-300">
-                3 хөзөр сонгоно уу
-              </h2>
-              <div className="inline-block px-6 py-3 bg-purple-600/30 rounded-full border border-purple-500/50">
-                <span className="text-xl font-semibold">
-                  Сонгосон: {selectedCards.length}/3
-                </span>
+  <div className="max-w-7xl mx-auto px-4 py-20">
+    <div className="text-center mb-8">
+      <h2 className="text-4xl font-serif font-bold mb-4 text-purple-300">
+        3 хөзөр сонгоно уу
+      </h2>
+      <div className="inline-block px-6 py-3 bg-purple-600/30 rounded-full border border-purple-500/50">
+        <span className="text-xl font-semibold">
+          Сонгосон: {selectedCards.length}/3
+        </span>
+      </div>
+    </div>
+
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
+      {shuffledCards.map((card) => {
+        const isSelected = selectedCards.includes(card.id);
+        const isFlipped = isSelected;
+
+        return (
+          <div
+            key={card.id}
+            onClick={() => handleCardSelect(card.id)}
+            className={`aspect-[2/3] cursor-pointer transition-all duration-500 transform hover:scale-105 ${
+              isFlipped ? 'scale-105' : ''
+            }`}
+            style={{ perspective: '1000px' }}
+          >
+            <div
+              className={`relative w-full h-full transition-transform duration-700 transform-style-3d ${
+                isFlipped ? 'rotate-y-180' : ''
+              }`}
+            >
+              {/* Front */}
+              <div className="absolute inset-0 backface-hidden bg-gradient-to-br from-purple-900 to-indigo-950 rounded-xl border-2 border-purple-500 flex flex-col items-center justify-center p-4">
+                <div className="text-4xl mb-2">{card.symbol}</div>
+                <div className="text-xs text-purple-300 font-serif">Tarot</div>
               </div>
-            </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
-              {shuffledCards.map((card) => {
-                const isSelected = selectedCards.includes(card.id);
-                const isFlipped = isSelected;
-
-                return (
-                  <div
-                    key={card.id}
-                    onClick={() => handleCardSelect(card.id)}
-                    className={`aspect-[2/3] cursor-pointer transition-all duration-500 transform hover:scale-105 ${
-                      isFlipped ? 'scale-105' : ''
-                    }`}
-                    style={{ perspective: '1000px' }}
-                  >
-                    <div
-                      className={`relative w-full h-full transition-transform duration-700 transform-style-3d ${
-                        isFlipped ? 'rotate-y-180' : ''
-                      }`}
-                    >
-                      {/* Front */}
-                      <div className="absolute inset-0 backface-hidden bg-gradient-to-br from-purple-900 to-indigo-950 rounded-xl border-2 border-purple-500 flex flex-col items-center justify-center p-4">
-                        <div className="text-4xl mb-2">{card.symbol}</div>
-                        <div className="text-xs text-purple-300 font-serif">Tarot</div>
+              {/* Back - ШИНЭЧЛЭГДСЭН: positionMeanings харуулах */}
+              <div className={`absolute inset-0 backface-hidden bg-gradient-to-br ${card.color} rounded-xl border-2 border-purple-300 flex flex-col items-center justify-center p-4 rotate-y-180 overflow-y-auto`}>
+                {isSelected && (
+                  <div className="absolute top-2 right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center z-10">
+                    <Check className="w-4 h-4" />
+                  </div>
+                )}
+                <div className="text-4xl mb-2">{card.symbol}</div>
+                <div className="text-sm font-semibold text-center mb-1">{card.mongolian}</div>
+                <div className="text-xs text-center opacity-90 px-2">
+                  {/* Хэрэв карт сонгогдсон бол байрлалын тайлбарыг харуулах */}
+                  {isSelected && selectedCards.indexOf(card.id) !== -1 && (
+                    <div className="mt-2 pt-2 border-t border-white/30">
+                      <div className="text-xs font-medium mb-1">
+                        {['Өнгөрсөн', 'Одоо', 'Ирээдүй'][selectedCards.indexOf(card.id)]} :
                       </div>
-
-                      {/* Back */}
-                      <div className={`absolute inset-0 backface-hidden bg-gradient-to-br ${card.color} rounded-xl border-2 border-purple-300 flex flex-col items-center justify-center p-4 rotate-y-180`}>
-                        {isSelected && (
-                          <div className="absolute top-2 right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                            <Check className="w-4 h-4" />
-                          </div>
-                        )}
-                        <div className="text-4xl mb-2">{card.symbol}</div>
-                        <div className="text-sm font-semibold text-center mb-1">{card.mongolian}</div>
-                        <div className="text-xs text-center opacity-90">{card.meaning}</div>
+                      <div className="text-xs opacity-80">
+                        {selectedCards.indexOf(card.id) === 0 && card.positionMeanings.past}
+                        {selectedCards.indexOf(card.id) === 1 && card.positionMeanings.present}
+                        {selectedCards.indexOf(card.id) === 2 && card.positionMeanings.future}
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="text-center">
-              <button
-                onClick={() => {
-                  setSelectedCards([]);
-                  const shuffled = [...TAROT_CARDS].sort(() => Math.random() - 0.5);
-                  setShuffledCards(shuffled);
-                }}
-                className="px-8 py-3 bg-purple-500/20 border-2 border-purple-500 rounded-xl font-semibold hover:bg-purple-500/30 hover:-translate-y-0.5 transition-all flex items-center gap-2 mx-auto"
-              >
-                <RotateCcw className="w-5 h-5" />
-                Дахин эхлүүлэх
-              </button>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
-        )}
+        );
+      })}
+    </div>
+
+    <div className="text-center">
+      <button
+        onClick={() => {
+          setSelectedCards([]);
+          const shuffled = [...TAROT_CARDS].sort(() => Math.random() - 0.5);
+          setShuffledCards(shuffled);
+        }}
+        className="px-8 py-3 bg-purple-500/20 border-2 border-purple-500 rounded-xl font-semibold hover:bg-purple-500/30 hover:-translate-y-0.5 transition-all flex items-center gap-2 mx-auto"
+      >
+        <RotateCcw className="w-5 h-5" />
+        Дахин эхлүүлэх
+      </button>
+    </div>
+  </div>
+)}
 
         {/* Result Page - ШИНЭЧЛЭГДСЭН */}
         {currentPage === 'result' && (
-          <div className="max-w-6xl mx-auto px-4 py-20">
-            <h2 className="text-4xl font-serif font-bold text-center mb-12 text-purple-300">
-              ✨ Таны Таротын үр дүн ✨
-            </h2>
+  <div className="max-w-6xl mx-auto px-4 py-20">
+    <h2 className="text-4xl font-serif font-bold text-center mb-12 text-purple-300">
+      ✨ Таны Таротын үр дүн ✨
+    </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-              {selectedCards.map((cardId, index) => {
-                const card = TAROT_CARDS.find(c => c.id === cardId);
-                const positions = ['🌅 Өнгөрсөн', '⏰ Одоо', '🌟 Ирээдүй'];
-                
-                return (
-                  <div
-                    key={cardId}
-                    className="bg-purple-900/40 backdrop-blur-lg rounded-3xl p-8 border border-purple-500/30 hover:border-purple-400 transition-all transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/30"
-                    style={{ animationDelay: `${index * 0.2}s` }}
-                  >
-                    <div className="text-center mb-6">
-                      <span className="inline-block px-6 py-2 bg-gradient-to-r from-purple-600 to-purple-700 rounded-full font-semibold">
-                        {positions[index]}
-                      </span>
-                    </div>
-
-                    <div className="text-center mb-6">
-                      <div className="text-7xl mb-4">{card.symbol}</div>
-                      <h3 className={`text-2xl font-bold mb-3 bg-gradient-to-r ${card.color} bg-clip-text text-transparent`}>
-                        {card.mongolian}
-                      </h3>
-                      <p className="text-purple-300 leading-relaxed">
-                        {card.meaning}
-                      </p>
-                    </div>
-
-                    <div className="pt-6 border-t border-purple-500/30">
-                      <p className="text-sm text-purple-400 text-center italic">
-                        {index === 0 && "Таны өнгөрсөн туршлага, хийсэн сонголтууд"}
-                        {index === 1 && "Таны одоогийн байдал, тулгарч буй асуудал"}
-                        {index === 2 && "Таны ирээдүйд болох зүйл, боломжууд"}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+      {selectedCards.map((cardId, index) => {
+        const card = TAROT_CARDS.find(c => c.id === cardId);
+        const positions = ['🌅 Өнгөрсөн', '⏰ Одоо', '🌟 Ирээдүй'];
+        const positionTitles = ['Өнгөрсөн', 'Одоо', 'Ирээдүй'];
+        
+        return (
+          <div
+            key={cardId}
+            className="bg-purple-900/40 backdrop-blur-lg rounded-3xl p-8 border border-purple-500/30 hover:border-purple-400 transition-all transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/30"
+            style={{ animationDelay: `${index * 0.2}s` }}
+          >
+            <div className="text-center mb-6">
+              <span className="inline-block px-6 py-2 bg-gradient-to-r from-purple-600 to-purple-700 rounded-full font-semibold">
+                {positions[index]}
+              </span>
             </div>
 
-            {/* Detailed Interpretation - ШИНЭЧЛЭГДСЭН */}
-            <div className="bg-purple-900/40 backdrop-blur-lg rounded-3xl p-8 border border-purple-500/30 mb-8">
-  <h3 className="text-2xl font-serif font-bold mb-6 text-center text-purple-300">
-    🔮 Нарийвчилсан тайлбар
-  </h3>
-  
-  <div className="space-y-6">
-    {/* Ерөнхий дүгнэлт */}
-    <div className="bg-purple-950/50 rounded-2xl p-6">
-      <h4 className="text-lg font-semibold mb-3 text-purple-200">
-        💭 Ерөнхий дүгнэлт
-      </h4>
-      <p className="text-purple-300 leading-relaxed">
-        Таны сонгосон хөзрүүд таны амьдралын гурван үе шатыг харуулж байна. 
-        <strong>Өнгөрсөн</strong> нь таны туулсан туршлага, сургамж, өмнөх үйл явдал, 
-        гаргасан сонголтуудыг харуулдаг. <strong>Одоо</strong> нь таны одоогийн нөхцөл байдал, 
-        дотоод мэдрэмж, анхаарах асуудлуудыг илэрхийлнэ. Харин <strong>Ирээдүй</strong> нь таны 
-        одоогийн үйлдэл, шийдвэрээс хамааран үүсэх боломжууд, ирэх сорилт, үр дүнг харуулдаг.
-      </p>
-    </div>
-
-    {/* Нарийвчилсан байрлалын тайлбар */}
-    <div className="bg-purple-950/50 rounded-2xl p-6">
-      <h4 className="text-lg font-semibold mb-3 text-purple-200">
-        🔮 Хөзрийн байрлалын тайлбар
-      </h4>
-      <ul className="space-y-3 text-purple-300">
-        <li>
-          <strong>1. Өнгөрсөн байрлал:</strong> Чамайг одоогийн байдалд хүргэсэн шалтгаан, өмнөх үйл явдал, шийдвэрүүдийг харуулдаг. Энэ нь туршлага, сургамжийг тань дүгнэх боломжийг олгоно.
-        </li>
-        <li>
-          <strong>2. Одоо байрлал:</strong> Яг одоогийн нөхцөл байдал, дотоод мэдрэмж, давамгайлах энерги, анхаарах асуудлыг илтгэнэ. Энэ хөзөр нь таны одоогийн үйлдэл болон шийдвэрт чиглэл өгдөг.
-        </li>
-        <li>
-          <strong>3. Ирээдүй байрлал:</strong> Болох магадлалтай нөхцөл байдал, одоогийн үйлдлээс гарах үр дүн, анхаарах боломжийг харуулдаг. Энэ нь таны ирээдүйн замд зориулсан сэрэмжлүүлэг болон боломжийн дохио болно.
-        </li>
-      </ul>
-    </div>
-
-    {/* Зөвлөмж */}
-    <div className="bg-purple-950/50 rounded-2xl p-6">
-      <h4 className="text-lg font-semibold mb-3 text-purple-200">
-        🎯 Зөвлөмж
-      </h4>
-      <ul className="space-y-2 text-purple-300">
-        <li className="flex items-start gap-2">
-          <span className="text-purple-400 mt-1">•</span>
-          <span>Өнгөрсөн үеэсээ сургамж авч, одоо мөчид анхаарлаа төвлөрүүлээрэй</span>
-        </li>
-        <li className="flex items-start gap-2">
-          <span className="text-purple-400 mt-1">•</span>
-          <span>Одоогийн нөхцөл байдлыг үндэслэн ирээдүйн төлөвлөгөөгөө боловсруулаарай</span>
-        </li>
-        <li className="flex items-start gap-2">
-          <span className="text-purple-400 mt-1">•</span>
-          <span>Дотоод мэдрэмжээ сонсож, өөрийнхөө шийдвэрт итгэлтэй байгаарай</span>
-        </li>
-        <li className="flex items-start gap-2">
-          <span className="text-purple-400 mt-1">•</span>
-          <span>Таротын зөвлөгөө нь зөвхөн санал; эцсийн шийдвэрийг та өөрөө гаргана</span>
-        </li>
-      </ul>
-    </div>
-
-    {/* Цагийн хуваарь */}
-    <div className="bg-purple-950/50 rounded-2xl p-6">
-      <h4 className="text-lg font-semibold mb-3 text-purple-200">
-        ⏰ Цагийн хуваарь
-      </h4>
-      <p className="text-purple-300 leading-relaxed">
-        Энэхүү уншлага таны {selectedTopic?.name || 'сонгосон сэдэв'}-тэй холбоотой ойрын 1-3 сарын хугацааг хамарч байна. 
-        Энэ хугацаанд та өөрчлөлт, хөгжил дэвшлийг мэдэрч, шинэ боломжуудыг олж мэдэх магадлалтай.
-      </p>
-    </div>
-  </div>
-</div>
-
-            {/* Professional Reading Section - ШИНЭ */}
-            <div className="bg-gradient-to-r from-purple-900/40 to-indigo-900/40 backdrop-blur-lg rounded-3xl p-8 border border-purple-500/30 mb-8">
-              <div className="text-center">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500/20 rounded-full mb-4">
-                  <span className="text-yellow-300">💫</span>
-                  <span className="text-yellow-300 text-sm font-medium">Шинэ санал</span>
-                </div>
-                <h3 className="text-2xl font-bold mb-4 text-white">
-                  Мэргэжлийн таротын уншлага авах
-                </h3>
-                <p className="text-purple-300 mb-6 max-w-2xl mx-auto">
-                  Энэхүү онлайн уншлага нь ерөнхий удирдамж юм. Таны хувийн тохиолдолд зориулсан нарийвчилсан, гүнзгий уншлага авахыг хүсвэл манай мэргэжлийн тарот уншигчтай холбогдоорой.
-                </p>
-                
-                <div className="space-y-4 mb-6">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
-                      <span>✅</span>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-white mb-1">Хувийн уншлага</h4>
-                      <p className="text-purple-300 text-sm">Таны асуултанд тусгайлан хариулах, нарийн дэлгэрэнгүй тайлбар</p>
-                    </div>
-                  </div>
-                  
-                
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
-                      <span>✅</span>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-white mb-1">Бүрэн тайлбар</h4>
-                      <p className="text-purple-300 text-sm">Бүх хөзрийн холбоо, нарийн утгыг тайлбарлах</p>
-                    </div>
-                  </div>
-                </div>
-
-                <a
-                  href={PROFESSIONAL_READING_LINK}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl font-semibold text-lg hover:shadow-lg hover:shadow-purple-500/50 hover:-translate-y-0.5 transition-all"
-                >
-                  <span>Мэргэжлийн уншлага авах</span>
-                  <ExternalLink className="w-5 h-5" />
-                </a>
-                
-                <p className="text-purple-400 text-sm mt-4">
-                  * Дээрх товч дарснаар та манай Facebook хуудас руу чиглүүлэгдэнэ
-                </p>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                onClick={resetReading}
-                className="px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl font-semibold text-lg hover:shadow-lg hover:shadow-purple-500/50 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
-              >
-                <RotateCcw className="w-5 h-5" />
-                Шинэ уншлага хийх
-              </button>
+            <div className="text-center mb-6">
+              <div className="text-7xl mb-4">{card.symbol}</div>
+              <h3 className={`text-2xl font-bold mb-3 bg-gradient-to-r ${card.color} bg-clip-text text-transparent`}>
+                {card.mongolian}
+              </h3>
+              <p className="text-purple-300 leading-relaxed mb-4">
+                {index === 0 && card.positionMeanings.past}
+                {index === 1 && card.positionMeanings.present}
+                {index === 2 && card.positionMeanings.future}
+              </p>
               
-              <button
-                onClick={() => {
-                  const result = selectedCards.map((id, i) => {
-                    const card = TAROT_CARDS.find(c => c.id === id);
-                    const pos = ['Өнгөрсөн', 'Одоо', 'Ирээдүй'][i];
-                    return `${pos}: ${card.mongolian} - ${card.meaning}`;
-                  }).join('\n');
-                  
-                  navigator.clipboard.writeText(result);
-                  showMessage('success', '✅ Үр дүн хуулагдлаа!');
-                }}
-                className="px-8 py-4 bg-purple-500/20 border-2 border-purple-500 rounded-xl font-semibold text-lg hover:bg-purple-500/30 hover:-translate-y-0.5 transition-all"
-              >
-                📋 Үр дүн хуулах
-              </button>
+              <div className="mt-4 pt-4 border-t border-purple-500/30">
+                <p className="text-sm text-purple-400 font-medium mb-2">
+                  Хөзрийн утга:
+                </p>
+                <p className="text-purple-300 text-sm italic">
+                  {card.meaning || "Шинэ эхлэл, боломж, итгэл хүлээлт"}
+                </p>
+              </div>
             </div>
 
-            {/* Share Section */}
-            <div className="mt-12 text-center">
-              <div className="inline-block bg-purple-900/40 backdrop-blur-lg rounded-2xl p-6 border border-purple-500/30">
-                <p className="text-purple-300 mb-4">
-                  💜 Таалагдсан уу? Найз нөхөдтэйгээ хуваалцаарай!
-                </p>
-                <div className="flex gap-3 justify-center">
-                  <a 
-                    href="https://www.facebook.com/sharer/sharer.php?u=https://tarot-mongolia.mn"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-12 h-12 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center transition-colors"
-                  >
-                    <span className="text-xl"><Facebook /></span>
-                  </a>
-                  <a 
-                    href="https://twitter.com/intent/tweet?text=Таротын сонирхолтой уншлага авлаа"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-12 h-12 bg-sky-500 hover:bg-sky-600 rounded-full flex items-center justify-center transition-colors"
-                  >
-                    <span className="text-xl"><Twitter size={24} /></span>
-                  </a>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText('Би Таротын мэргэ авлаа - та ч бас үнэ төлбөргүй авч үзээрэй!');
-                      showMessage('success', '📋 Холбоос хуулагдлаа!');
-                    }}
-                    className="w-12 h-12 bg-purple-600 hover:bg-purple-700 rounded-full flex items-center justify-center transition-colors"
-                  >
-                    <span className="text-xl">📋</span>
-                  </button>
-                </div>
-              </div>
+            <div className="pt-6 border-t border-purple-500/30">
+              <p className="text-sm text-purple-400 text-center italic">
+                {index === 0 && "Өнгөрсөн үеийн туршлага, сургамж, өмнөх шийдвэрүүд"}
+                {index === 1 && "Одоогийн нөхцөл байдал, дотоод мэдрэмж, анхаарах асуудал"}
+                {index === 2 && "Ирээдүйн боломж, үр дүн, анхаарах зүйлс"}
+              </p>
             </div>
           </div>
-        )}
+        );
+      })}
+    </div>
+
+    {/* Detailed Interpretation - ШИНЭЧЛЭГДСЭН */}
+    <div className="bg-purple-900/40 backdrop-blur-lg rounded-3xl p-8 border border-purple-500/30 mb-8">
+      <h3 className="text-2xl font-serif font-bold mb-6 text-center text-purple-300">
+        🔮 Нарийвчилсан тайлбар
+      </h3>
+      
+      <div className="space-y-6">
+        {/* Ерөнхий дүгнэлт */}
+        <div className="bg-purple-950/50 rounded-2xl p-6">
+          <h4 className="text-lg font-semibold mb-3 text-purple-200">
+            💭 Ерөнхий дүгнэлт
+          </h4>
+          <p className="text-purple-300 leading-relaxed">
+            {selectedCards.length === 3 && (() => {
+              const pastCard = TAROT_CARDS.find(c => c.id === selectedCards[0]);
+              const presentCard = TAROT_CARDS.find(c => c.id === selectedCards[1]);
+              const futureCard = TAROT_CARDS.find(c => c.id === selectedCards[2]);
+              
+              return (
+                <>
+                  Таны сонгосон <strong>{pastCard.mongolian}</strong>, <strong>{presentCard.mongolian}</strong>, 
+                  <strong>{futureCard.mongolian}</strong> хөзрүүд таны амьдралын гурван үе шатыг харуулж байна. 
+                  <strong>Өнгөрсөн</strong> нь таны туулсан туршлага, сургамж, өмнөх үйл явдал, 
+                  гаргасан сонголтуудыг харуулдаг. <strong>Одоо</strong> нь таны одоогийн нөхцөл байдал, 
+                  дотоод мэдрэмж, анхаарах асуудлуудыг илэрхийлнэ. Харин <strong>Ирээдүй</strong> нь таны 
+                  одоогийн үйлдэл, шийдвэрээс хамааран үүсэх боломжууд, ирэх сорилт, үр дүнг харуулдаг.
+                </>
+              );
+            })()}
+          </p>
+        </div>
+
+        {/* Хөзрийн бүрэн тайлбар */}
+        <div className="bg-purple-950/50 rounded-2xl p-6">
+          <h4 className="text-lg font-semibold mb-3 text-purple-200">
+            🔮 Хөзрийн нарийвчилсан тайлбар
+          </h4>
+          <div className="space-y-4">
+            {selectedCards.map((cardId, index) => {
+              const card = TAROT_CARDS.find(c => c.id === cardId);
+              const positionNames = ['Өнгөрсөн', 'Одоо', 'Ирээдүй'];
+              
+              return (
+                <div key={cardId} className="bg-purple-900/30 rounded-xl p-4">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-2xl">{card.symbol}</span>
+                    <div>
+                      <h5 className="font-semibold text-white">{card.mongolian}</h5>
+                      <p className="text-purple-400 text-sm">{positionNames[index]}</p>
+                    </div>
+                  </div>
+                  <p className="text-purple-300 text-sm">
+                    {index === 0 && card.positionMeanings.past}
+                    {index === 1 && card.positionMeanings.present}
+                    {index === 2 && card.positionMeanings.future}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Зөвлөмж */}
+        <div className="bg-purple-950/50 rounded-2xl p-6">
+          <h4 className="text-lg font-semibold mb-3 text-purple-200">
+            🎯 Зөвлөмж
+          </h4>
+          <ul className="space-y-2 text-purple-300">
+            <li className="flex items-start gap-2">
+              <span className="text-purple-400 mt-1">•</span>
+              <span>Өнгөрсөн үеэсээ сургамж авч, одоо мөчид анхаарлаа төвлөрүүлээрэй</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-purple-400 mt-1">•</span>
+              <span>Одоогийн нөхцөл байдлыг үндэслэн ирээдүйн төлөвлөгөөгөө боловсруулаарай</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-purple-400 mt-1">•</span>
+              <span>Дотоод мэдрэмжээ сонсож, өөрийнхөө шийдвэрт итгэлтэй байгаарай</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-purple-400 mt-1">•</span>
+              <span>Таротын зөвлөгөө нь зөвхөн санал; эцсийн шийдвэрийг та өөрөө гаргана</span>
+            </li>
+          </ul>
+        </div>
+
+        {/* Цагийн хуваарь */}
+        <div className="bg-purple-950/50 rounded-2xl p-6">
+          <h4 className="text-lg font-semibold mb-3 text-purple-200">
+            ⏰ Цагийн хуваарь
+          </h4>
+          <p className="text-purple-300 leading-relaxed">
+            Энэхүү уншлага таны {selectedTopic?.name || 'сонгосон сэдэв'}-тэй холбоотой ойрын 1-3 сарын хугацааг хамарч байна. 
+            Энэ хугацаанд та өөрчлөлт, хөгжил дэвшлийг мэдэрч, шинэ боломжуудыг олж мэдэх магадлалтай.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    {/* Professional Reading Section - ШИНЭ */}
+    <div className="bg-gradient-to-r from-purple-900/40 to-indigo-900/40 backdrop-blur-lg rounded-3xl p-8 border border-purple-500/30 mb-8">
+      <div className="text-center">
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500/20 rounded-full mb-4">
+          <span className="text-yellow-300">💫</span>
+          <span className="text-yellow-300 text-sm font-medium">Шинэ санал</span>
+        </div>
+        <h3 className="text-2xl font-bold mb-4 text-white">
+          Мэргэжлийн таротын уншлага авах
+        </h3>
+        <p className="text-purple-300 mb-6 max-w-2xl mx-auto">
+          Энэхүү онлайн уншлага нь ерөнхий удирдамж юм. Таны хувийн тохиолдолд зориулсан нарийвчилсан, гүнзгий уншлага авахыг хүсвэл манай мэргэжлийн тарот уншигчтай холбогдоорой.
+        </p>
+        
+        <div className="space-y-4 mb-6">
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+              <span>✅</span>
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-1">Хувийн уншлага</h4>
+              <p className="text-purple-300 text-sm">Таны асуултанд тусгайлан хариулах, нарийн дэлгэрэнгүй тайлбар</p>
+            </div>
+          </div>
+          
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+              <span>✅</span>
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-1">Бүрэн тайлбар</h4>
+              <p className="text-purple-300 text-sm">Бүх хөзрийн холбоо, нарийн утгыг тайлбарлах</p>
+            </div>
+          </div>
+        </div>
+
+        <a
+          href={PROFESSIONAL_READING_LINK}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl font-semibold text-lg hover:shadow-lg hover:shadow-purple-500/50 hover:-translate-y-0.5 transition-all"
+        >
+          <span>Мэргэжлийн уншлага авах</span>
+          <ExternalLink className="w-5 h-5" />
+        </a>
+        
+        <p className="text-purple-400 text-sm mt-4">
+          * Дээрх товч дарснаар та манай Facebook хуудас руу чиглүүлэгдэнэ
+        </p>
+      </div>
+    </div>
+
+    {/* Action Buttons */}
+    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      <button
+        onClick={resetReading}
+        className="px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl font-semibold text-lg hover:shadow-lg hover:shadow-purple-500/50 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
+      >
+        <RotateCcw className="w-5 h-5" />
+        Шинэ уншлага хийх
+      </button>
+      
+      <button
+        onClick={() => {
+          const result = selectedCards.map((id, i) => {
+            const card = TAROT_CARDS.find(c => c.id === id);
+            const pos = ['Өнгөрсөн', 'Одоо', 'Ирээдүй'][i];
+            const meaning = i === 0 ? card.positionMeanings.past : 
+                          i === 1 ? card.positionMeanings.present : 
+                          card.positionMeanings.future;
+            return `${pos} байрлал: ${card.mongolian}\n${meaning}`;
+          }).join('\n\n');
+          
+          navigator.clipboard.writeText(result);
+          showMessage('success', '✅ Үр дүн хуулагдлаа!');
+        }}
+        className="px-8 py-4 bg-purple-500/20 border-2 border-purple-500 rounded-xl font-semibold text-lg hover:bg-purple-500/30 hover:-translate-y-0.5 transition-all"
+      >
+        📋 Үр дүн хуулах
+      </button>
+    </div>
+
+  </div>
+)}
 
         {/* Blogs Page */}
         {currentPage === 'blogs' && (
