@@ -1,6 +1,20 @@
+
 import React, { useState, useEffect } from 'react';
-import { Moon, Star, Heart, Briefcase, DollarSign, Activity, Sparkles, ArrowLeft, LogOut, RotateCcw, Check, Home, Book, FileText, User, ExternalLink, ChevronRight } from 'lucide-react';
-// Firebase Configuration - ШИНЭЧЛЭГДСЭН
+import { Moon, Star, Heart, Briefcase, DollarSign, Activity, Sparkles, ArrowLeft, LogOut, RotateCcw, Check, Home, Book, FileText, User, ExternalLink, ChevronRight, Loader2 } from 'lucide-react';
+
+// Firebase imports
+import { initializeApp } from 'firebase/app';
+import { 
+  getAuth, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup
+} from 'firebase/auth';
+
+// Firebase Configuration
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDW-dNxxhMIBphKPX2xIKE0qsO1puyxwN0",
   authDomain: "tarot-mongolia.firebaseapp.com",
@@ -11,6 +25,10 @@ const FIREBASE_CONFIG = {
   measurementId: "G-FVX95LELB3"
 };
 
+// Initialize Firebase
+const app = initializeApp(FIREBASE_CONFIG);
+const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
 // Tarot Cards Data
 const TAROT_CARDS = [
   { id: 0, name: 'The Fool', mongolian: 'Тэнэг', meaning: 'Шинэ эхлэл, боломж, итгэл хүлээлт', symbol: '🌟', color: 'from-yellow-400 to-yellow-600' },
@@ -483,6 +501,7 @@ const TarotApp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [birthDate, setBirthDate] = useState('');
+const [authLoading, setAuthLoading] = useState(false); // Firebase loading state
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [selectedCards, setSelectedCards] = useState([]);
   const [shuffledCards, setShuffledCards] = useState([]);
@@ -496,19 +515,27 @@ const TarotApp = () => {
   const [showFullResult, setShowFullResult] = useState(false); // ШИНЭ: Үр дүнгийн дэлгэрэнгүй
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('tarotUser');
-    if (savedUser) {
-      try {
-        setUser(JSON.parse(savedUser));
-      } catch (e) {
-        localStorage.removeItem('tarotUser');
-      }
-    }
-
-    const thirtyYearsAgo = new Date();
-    thirtyYearsAgo.setFullYear(thirtyYearsAgo.getFullYear() - 30);
-    setBirthDate(thirtyYearsAgo.toISOString().split('T')[0]);
-  }, []);
+      const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+        if (firebaseUser) {
+          const userData = {
+            uid: firebaseUser.uid,
+            name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+            email: firebaseUser.email,
+            photoURL: firebaseUser.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(firebaseUser.email?.split('@')[0] || 'U')}&background=8b5cf6&color=fff&size=128`
+          };
+          setUser(userData);
+        } else {
+          setUser(null);
+        }
+        setLoading(false);
+      });
+  
+      const thirtyYearsAgo = new Date();
+      thirtyYearsAgo.setFullYear(thirtyYearsAgo.getFullYear() - 30);
+      setBirthDate(thirtyYearsAgo.toISOString().split('T')[0]);
+  
+      return () => unsubscribe();
+    }, []);
 
   const showMessage = (type, message) => {
     if (type === 'error') {
@@ -537,69 +564,86 @@ const TarotApp = () => {
   };
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      showMessage('error', '⚠️ И-мэйл болон нууц үгээ оруулна уу');
-      return;
-    }
+     if (!email || !password) {
+       showMessage('error', '⚠️ И-мэйл болон нууц үгээ оруулна уу');
+       return;
+     }
+ 
+     setAuthLoading(true);
+     
+     try {
+       await signInWithEmailAndPassword(auth, email, password);
+       showMessage('success', '✅ Амжилттай нэвтэрлээ!');
+       setTimeout(() => navigateTo('birthdate'), 1000);
+     } catch (error) {
+       let errorMessage = '❌ Нэвтрэх үед алдаа гарлаа';
+       
+       if (error.code === 'auth/user-not-found') {
+         errorMessage = '⚠️ И-мэйл бүртгэгдээгүй байна';
+       } else if (error.code === 'auth/wrong-password') {
+         errorMessage = '⚠️ Нууц үг буруу байна';
+       } else if (error.code === 'auth/invalid-email') {
+         errorMessage = '⚠️ И-мэйл хаяг буруу байна';
+       } else if (error.code === 'auth/too-many-requests') {
+         errorMessage = '⚠️ Хэт олон оролдлого хийсэн. Түр хүлээнэ үү';
+       }
+       
+       showMessage('error', errorMessage);
+     } finally {
+       setAuthLoading(false);
+     }
+   };
 
-    setLoading(true);
-    
-    setTimeout(() => {
-      const userData = {
-        name: email.split('@')[0],
-        email: email,
-        photoURL: `https://ui-avatars.com/api/?name=${encodeURIComponent(email.split('@')[0])}&background=8b5cf6&color=fff&size=128`
-      };
-      
-      localStorage.setItem('tarotUser', JSON.stringify(userData));
-      setUser(userData);
-      showMessage('success', '✅ Амжилттай нэвтэрлээ!');
-      setLoading(false);
-      
-      setTimeout(() => navigateTo('birthdate'), 1000);
-    }, 1000);
-  };
-
-  const handleRegister = async () => {
-    if (!email || !password) {
-      showMessage('error', '⚠️ И-мэйл болон нууц үгээ оруулна уу');
-      return;
-    }
-
-    if (password.length < 6) {
-      showMessage('error', '⚠️ Нууц үг хамгийн багадаа 6 тэмдэгт байх ёстой');
-      return;
-    }
-
-    setLoading(true);
-
-    setTimeout(() => {
-      const userData = {
-        name: email.split('@')[0],
-        email: email,
-        photoURL: `https://ui-avatars.com/api/?name=${encodeURIComponent(email.split('@')[0])}&background=8b5cf6&color=fff&size=128`
-      };
-      
-      localStorage.setItem('tarotUser', JSON.stringify(userData));
-      setUser(userData);
-      showMessage('success', '🎉 Амжилттай бүртгүүллээ!');
-      setLoading(false);
-      
-      setTimeout(() => navigateTo('birthdate'), 1000);
-    }, 1000);
-  };
-
-  const handleLogout = () => {
-    if (window.confirm('🚪 Та системээс гарахдаа итгэлтэй байна уу?')) {
-      localStorage.removeItem('tarotUser');
-      setUser(null);
-      setEmail('');
-      setPassword('');
-      setPageHistory(['home']);
-      setCurrentPage('home');
-      showMessage('success', '✅ Амжилттай гарлаа');
-    }
-  };
+    // Firebase Register
+   const handleRegister = async () => {
+      if (!email || !password) {
+        showMessage('error', '⚠️ И-мэйл болон нууц үгээ оруулна уу');
+        return;
+      }
+  
+      if (password.length < 6) {
+        showMessage('error', '⚠️ Нууц үг хамгийн багадаа 6 тэмдэгт байх ёстой');
+        return;
+      }
+  
+      setAuthLoading(true);
+  
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        showMessage('success', '🎉 Амжилттай бүртгүүллээ!');
+        setTimeout(() => navigateTo('birthdate'), 1000);
+      } catch (error) {
+        let errorMessage = '❌ Бүртгэх үед алдаа гарлаа';
+        
+        if (error.code === 'auth/email-already-in-use') {
+          errorMessage = '⚠️ Энэ и-мэйл аль хэдийн бүртгэгдсэн байна';
+        } else if (error.code === 'auth/invalid-email') {
+          errorMessage = '⚠️ И-мэйл хаяг буруу байна';
+        } else if (error.code === 'auth/weak-password') {
+          errorMessage = '⚠️ Нууц үг хэт сул байна';
+        }
+        
+        showMessage('error', errorMessage);
+      } finally {
+        setAuthLoading(false);
+      }
+    };
+  
+  
+  const handleLogout = async () => {
+      if (window.confirm('🚪 Та системээс гарахдаа итгэлтэй байна уу?')) {
+        try {
+          await signOut(auth);
+          setEmail('');
+          setPassword('');
+          setPageHistory(['home']);
+          setCurrentPage('home');
+          showMessage('success', '✅ Амжилттай гарлаа');
+        } catch (error) {
+          showMessage('error', '❌ Гарах үед алдаа гарлаа');
+        }
+      }
+    };
 
   const handleBirthDateSubmit = () => {
     if (!birthDate) {
