@@ -16,7 +16,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import DetailedArticleModal from './components/DetailedArticleModal';
 
-// Хуудаснууд
+// Хуудаснууд - Хуучин
 import Home from './pages/Home';
 import Birthdate from './pages/Birthdate';
 import Topics from './pages/Topics';
@@ -25,6 +25,11 @@ import Result from './pages/Result';
 import Blogs from './pages/Blogs';
 import News from './pages/News';
 import About from './pages/About';
+
+// Хуудаснууд - Шинэ
+import Information from './pages/Information';
+import Horoscope from './pages/Horoscope';
+import Meditation from './pages/Meditation';
 
 // Auth утилит
 import { handleLogin, handleRegister, handleLogout } from './utils/authUtils';
@@ -235,6 +240,12 @@ const TarotApp = () => {
             showMessage={showMessage}
           />
         );
+      case 'information':
+        return <Information />;
+      case 'meditation':
+        return <Meditation />;
+      case 'horoscope':
+        return <Horoscope />;
       case 'blogs':
         return (
           <Blogs 

@@ -1,3 +1,4 @@
+// src/icons/index.js
 // Бүх icon-уудыг нэг файлд хадгалах
 export {
   Moon,
@@ -25,5 +26,24 @@ export {
   ChevronRight,
   Loader2,
   Copy,
-  NewspaperIcon
+  NewspaperIcon,
+  Calendar,
+  Sun,
+  TrendingUp,
+  Users,
+  HelpCircle,
+  Info,
+  Shield,
+  Award,
+  Play,
+  Pause,
+  Headphones,
+  Download,
+   RefreshCw,
+  Share2,
+  Clock,
+  BookOpen,Volume2,
+  VolumeX,
+  SkipBack,
+  SkipForward
 } from 'lucide-react';
