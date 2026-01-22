@@ -78,7 +78,7 @@ const About = ({ professionalReadingLink, navigateTo }) => {
             </div>
             <div className="flex items-center gap-3">
               <Phone className="w-4 h-4 text-purple-400" />
-              <span>+976 9999-9999</span>
+              <span>+976 96113399</span>
             </div>
             <div className="flex items-center gap-3">
               <MapPin className="w-4 h-4 text-purple-400" />

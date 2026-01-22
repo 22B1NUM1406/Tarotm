@@ -60,7 +60,7 @@ const Footer = ({ navigateTo }) => {
               </li>
               <li className="flex items-center gap-2">     
                 <Phone className="w-4 h-4" /> 
-                <span>+976 9999-9999</span>
+                <span>+976 96113399</span>
               </li>
             </ul>
           </div>
