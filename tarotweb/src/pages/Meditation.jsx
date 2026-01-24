@@ -141,19 +141,7 @@ const Meditation = () => {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  // Хуваалцах
-  const handleShare = (meditation) => {
-    if (navigator.share) {
-      navigator.share({
-        title: meditation.title,
-        text: meditation.description,
-        url: window.location.href,
-      });
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      alert('📋 Холбоос хуулагдлаа!');
-    }
-  };
+  
 
   // Татаж авах
   const handleDownload = (meditation) => {
@@ -173,7 +161,7 @@ const Meditation = () => {
           🎧 Дуутай бясалгалууд
         </h1>
         <p className="text-xl text-purple-300 max-w-3xl mx-auto">
-          Сонсголын бясалгалаар тайван болж, өөрийгөө ойлгоорой
+          Бясалгалаар дамжуулан тайвширч, өөрийгөө ойлгоорой
         </p>
       </div>
 
