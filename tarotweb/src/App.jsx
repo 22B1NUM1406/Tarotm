@@ -60,7 +60,6 @@ const TarotApp = () => {
             )}&background=8b5cf6&color=fff&size=128`,
         };
         setUser(userData);
-        // Нэвтэрмэгц төлбөрийн статус шалгана
         const paid = await checkActivePayment(userData.uid);
         setHasPaid(paid);
       } else {
@@ -96,25 +95,19 @@ const TarotApp = () => {
     }
   };
 
-  // ── Birthdate дараа: төлбөр шалгаад чиглүүлнэ ──
   const handleBirthDateSubmit = async () => {
     if (!birthDate) { showMessage('error', '⚠️ Төрсөн өдрөө оруулна уу'); return; }
     if (!gender)    { showMessage('error', '⚠️ Хүйсээ сонгоно уу');       return; }
-
     const updated = { ...user, birthDate, gender };
     localStorage.setItem('tarotUser', JSON.stringify(updated));
     setUser(updated);
-
-    const paid = await checkActivePayment(user.uid);
-    setHasPaid(paid);
-    navigateTo(paid ? 'topics' : 'payment');
+    // hasPaid state ашиглана — дахин API дуудахгүй
+    navigateTo(hasPaid ? 'topics' : 'payment');
   };
 
-  // ── Сэдэв сонгохоос өмнө төлбөр шалгана ──
-  const handleTopicSelect = async (topic) => {
-    const paid = await checkActivePayment(user.uid);
-    setHasPaid(paid);
-    if (!paid) {
+  // ── Сэдэв сонгох — hasPaid state ашиглана, дахин API дуудахгүй ──
+  const handleTopicSelect = (topic) => {
+    if (!hasPaid) {
       showMessage('error', '⚠️ Хөзөр сонгохын тулд эхлээд 5,000₮ төлнө үү');
       navigateTo('payment');
       return;
@@ -150,7 +143,7 @@ const TarotApp = () => {
     }
   };
 
-  // ── Төлбөр амжилттай ──
+  // ── Төлбөр амжилттай — шууд hasPaid=true, API дахин дуудахгүй ──
   const handlePaymentSuccess = () => {
     setHasPaid(true);
     showMessage('success', '✅ Төлбөр амжилттай! Сэдвээ сонгоно уу.');
