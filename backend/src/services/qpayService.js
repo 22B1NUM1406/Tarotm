@@ -1,194 +1,162 @@
-// src/services/qpayService.js
+// src/services/qpayService.js — QPay API v2 (Postman collection-д тулгуурласан)
+
 const axios = require('axios');
 
-const QPAY_CONFIG = {
-  apiUrl: 'https://merchant.qpay.mn/v2',
-  username: process.env.QPAY_USERNAME,
-  password: process.env.QPAY_PASSWORD,
-  invoiceCode: process.env.QPAY_INVOICE_CODE || 'TAROT_INVOICE'
+const QPAY_BASE_URL = 'https://merchant.qpay.mn/v2';
+
+// Token cache
+let tokenCache = {
+  access_token: null,
+  refresh_token: null,
+  expires_at: null,
 };
 
-let cachedToken = null;
-let tokenExpiry = null;
-
-/**
- * Get QPay Access Token
- */
+// ─────────────────────────────────────────
+//  1. Token авах / refresh хийх
+// ─────────────────────────────────────────
 async function getAccessToken() {
-  try {
-    // Return cached token if still valid
-    if (cachedToken && tokenExpiry && new Date() < tokenExpiry) {
-      return cachedToken;
-    }
+  const now = Date.now();
 
-    const authString = Buffer.from(
-      `${QPAY_CONFIG.username}:${QPAY_CONFIG.password}`
-    ).toString('base64');
-
-    const response = await axios.post(
-      `${QPAY_CONFIG.apiUrl}/auth/token`,
-      {},
-      {
-        headers: {
-          'Authorization': `Basic ${authString}`,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-
-    if (response.data && response.data.access_token) {
-      cachedToken = response.data.access_token;
-      // Token expires in 1 hour, refresh 5 minutes before
-      tokenExpiry = new Date(Date.now() + 55 * 60 * 1000);
-      
-      console.log('✅ QPay token авлаа');
-      return cachedToken;
-    }
-
-    throw new Error('QPay token авч чадсангүй');
-  } catch (error) {
-    console.error('❌ QPay token алдаа:', error.response?.data || error.message);
-    throw new Error('QPay authentication failed');
+  // Cache хүчинтэй байвал буцаана
+  if (tokenCache.access_token && tokenCache.expires_at > now + 60000) {
+    return tokenCache.access_token;
   }
-}
 
-/**
- * Create QPay Invoice
- */
-async function createInvoice(invoiceData) {
-  try {
-    const token = await getAccessToken();
-    
-    const payload = {
-      invoice_code: QPAY_CONFIG.invoiceCode,
-      sender_invoice_no: invoiceData.invoiceId,
-      invoice_receiver_code: 'terminal',
-      invoice_description: invoiceData.description || 'Таротын уншлага',
-      amount: invoiceData.amount,
-      callback_url: `${process.env.BACKEND_URL}/api/payment/webhook`
-    };
-
-    console.log('📤 QPay invoice үүсгэж байна:', payload.sender_invoice_no);
-
-    const response = await axios.post(
-      `${QPAY_CONFIG.apiUrl}/invoice`,
-      payload,
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+  // Refresh token байвал refresh хийнэ
+  if (tokenCache.refresh_token && tokenCache.expires_at > now) {
+    try {
+      const res = await axios.post(
+        `${QPAY_BASE_URL}/auth/refresh`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${tokenCache.refresh_token}` },
         }
-      }
-    );
-
-    if (response.data) {
-      console.log('✅ QPay invoice үүссэн:', response.data.invoice_id);
-      
-      return {
-        success: true,
-        invoiceId: response.data.invoice_id,
-        qpayInvoiceId: response.data.invoice_id,
-        qrText: response.data.qr_text,
-        qrImage: response.data.qr_image,
-        urls: response.data.urls || []
+      );
+      tokenCache = {
+        access_token:  res.data.access_token,
+        refresh_token: res.data.refresh_token,
+        expires_at:    now + 55 * 60 * 1000, // 55 минут
       };
+      console.log('🔄 QPay token refresh хийлээ');
+      return tokenCache.access_token;
+    } catch {
+      // Refresh алдаатай бол шинэ token авна
     }
-
-    throw new Error('Invalid QPay response');
-  } catch (error) {
-    console.error('❌ QPay invoice алдаа:', error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || 'Invoice үүсгэхэд алдаа гарлаа');
   }
-}
 
-/**
- * Check QPay Payment Status
- */
-async function checkPaymentStatus(qpayInvoiceId) {
-  try {
-    const token = await getAccessToken();
-
-    const response = await axios.post(
-      `${QPAY_CONFIG.apiUrl}/payment/check`,
-      {
-        object_type: 'INVOICE',
-        object_id: qpayInvoiceId
+  // Шинэ token авах — Basic Auth (username:password)
+  const res = await axios.post(
+    `${QPAY_BASE_URL}/auth/token`,
+    {},
+    {
+      auth: {
+        username: process.env.QPAY_USERNAME,
+        password: process.env.QPAY_PASSWORD,
       },
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-
-    if (response.data && response.data.rows && response.data.rows.length > 0) {
-      const payment = response.data.rows[0];
-      
-      return {
-        success: true,
-        paid: payment.payment_status === 'PAID',
-        status: payment.payment_status,
-        paymentDate: payment.payment_date,
-        paidAmount: payment.paid_amount,
-        data: payment
-      };
     }
+  );
 
-    return {
-      success: true,
-      paid: false,
-      status: 'PENDING'
-    };
-  } catch (error) {
-    console.error('❌ QPay status шалгах алдаа:', error.response?.data || error.message);
-    throw new Error('Төлбөрийн статус шалгахад алдаа гарлаа');
-  }
+  tokenCache = {
+    access_token:  res.data.access_token,
+    refresh_token: res.data.refresh_token,
+    expires_at:    now + 55 * 60 * 1000,
+  };
+
+  console.log('✅ QPay token авлаа');
+  return tokenCache.access_token;
 }
 
-/**
- * Cancel QPay Invoice
- */
-async function cancelInvoice(qpayInvoiceId) {
-  try {
-    const token = await getAccessToken();
+// ─────────────────────────────────────────
+//  2. Invoice үүсгэх
+// ─────────────────────────────────────────
+async function createInvoice({ invoiceNo, amount, description, callbackUrl }) {
+  const token = await getAccessToken();
 
-    const response = await axios.delete(
-      `${QPAY_CONFIG.apiUrl}/invoice/${qpayInvoiceId}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      }
-    );
+  const body = {
+    invoice_code:          process.env.QPAY_INVOICE_CODE,  // QPay-с авсан invoice code
+    sender_invoice_no:     invoiceNo,                       // Манай unique ID
+    invoice_receiver_code: 'terminal',
+    invoice_description:   description || 'Таротын уншлага',
+    amount:                amount,
+    callback_url:          callbackUrl,
+  };
 
-    return {
-      success: true,
-      message: 'Invoice цуцлагдсан'
-    };
-  } catch (error) {
-    console.error('❌ QPay invoice цуцлах алдаа:', error.response?.data || error.message);
-    throw new Error('Invoice цуцлахад алдаа гарлаа');
-  }
+  const res = await axios.post(`${QPAY_BASE_URL}/invoice`, body, {
+    headers: {
+      Authorization:  `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  return {
+    invoice_id:  res.data.invoice_id,
+    qr_text:     res.data.qr_text,
+    qr_image:    res.data.qr_image,    // base64 PNG
+    urls:        res.data.urls || [],  // Банкны апп линкүүд
+  };
 }
 
-/**
- * Verify Webhook Signature
- */
-function verifyWebhookSignature(payload, signature) {
-  const crypto = require('crypto');
-  
-  const expectedSignature = crypto
-    .createHmac('sha256', process.env.QPAY_WEBHOOK_SECRET || 'default_secret')
-    .update(JSON.stringify(payload))
-    .digest('hex');
+// ─────────────────────────────────────────
+//  3. Төлбөр шалгах
+// ─────────────────────────────────────────
+async function checkPayment(invoiceId) {
+  const token = await getAccessToken();
 
-  return signature === expectedSignature;
+  const body = {
+    object_type: 'INVOICE',
+    object_id:   invoiceId,
+    offset: {
+      page_number: 1,
+      page_limit:  100,
+    },
+  };
+
+  const res = await axios.post(`${QPAY_BASE_URL}/payment/check`, body, {
+    headers: {
+      Authorization:  `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  // count > 0 бол төлбөр хийгдсэн
+  const paid = res.data.count > 0;
+  return {
+    paid,
+    count:    res.data.count,
+    payments: res.data.rows || [],
+  };
+}
+
+// ─────────────────────────────────────────
+//  4. Invoice цуцлах
+// ─────────────────────────────────────────
+async function cancelInvoice(invoiceId) {
+  const token = await getAccessToken();
+
+  await axios.delete(`${QPAY_BASE_URL}/invoice/${invoiceId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  return { cancelled: true };
+}
+
+// ─────────────────────────────────────────
+//  5. Нэг төлбөрийн дэлгэрэнгүй
+// ─────────────────────────────────────────
+async function getPayment(paymentId) {
+  const token = await getAccessToken();
+
+  const res = await axios.get(`${QPAY_BASE_URL}/payment/${paymentId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  return res.data;
 }
 
 module.exports = {
+  getAccessToken,
   createInvoice,
-  checkPaymentStatus,
+  checkPayment,
   cancelInvoice,
-  verifyWebhookSignature
+  getPayment,
 };
