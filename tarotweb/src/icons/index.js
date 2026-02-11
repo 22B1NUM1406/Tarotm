@@ -29,6 +29,7 @@ export {
   NewspaperIcon,
   Calendar,
   Sun,
+  AlertCircle,
   TrendingUp,
   Users,
   HelpCircle,
