@@ -50,6 +50,8 @@ const Home = ({
   activeTab, setActiveTab, onArticleClick,
   hasPaid,
 }) => {
+  const [authTab, setAuthTab] = useState('login'); // login | register
+
   return (
     <>
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
@@ -73,43 +75,93 @@ const Home = ({
       `}</style>
 
       {!user ? (
-        /* ── Нэвтрэх форм ── */
-        <div className="max-w-md mx-auto bg-purple-900/40 backdrop-blur-lg rounded-3xl p-8 border border-purple-500/30 shadow-2xl">
-          <h3 className="text-2xl font-semibold text-center mb-6 flex items-center justify-center gap-2">
-            <Star className="w-6 h-6 text-purple-400" />
-            Нэвтрэх / Бүртгүүлэх
-          </h3>
-
-          {error && (
-            <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 text-sm animate-shake">{error}</div>
-          )}
-          {success && (
-            <div className="mb-4 p-3 bg-green-500/20 border border-green-500/50 rounded-lg text-green-200 text-sm">{success}</div>
-          )}
-
-          <input type="email" placeholder="И-мэйл хаяг" value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
-            className="w-full px-4 py-3 mb-4 bg-purple-950/60 border-2 border-purple-500/50 rounded-xl text-white placeholder-purple-400 focus:outline-none focus:border-purple-400 focus:ring-4 focus:ring-purple-500/20 transition" />
-
-          <input type="password" placeholder="Нууц үг (багадаа 6 тэмдэгт)" value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
-            className="w-full px-4 py-3 mb-6 bg-purple-950/60 border-2 border-purple-500/50 rounded-xl text-white placeholder-purple-400 focus:outline-none focus:border-purple-400 focus:ring-4 focus:ring-purple-500/20 transition" />
-
-          <div className="flex gap-3 mb-6">
-            <button onClick={handleLogin} disabled={authLoading}
-              className="flex-1 py-3 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-500/50 hover:-translate-y-0.5 transition-all disabled:opacity-50">
-              {authLoading ? 'Түр хүлээнэ үү...' : 'Нэвтрэх'}
+        /* ── Нэвтрэх/Бүртгүүлэх форм (Tab хувилбар) ── */
+        <div className="max-w-md mx-auto bg-purple-900/40 backdrop-blur-lg rounded-3xl overflow-hidden border border-purple-500/30 shadow-2xl">
+          
+          {/* Tab Header */}
+          <div className="flex border-b border-purple-500/30">
+            <button
+              onClick={() => setAuthTab('login')}
+              className={`flex-1 py-4 font-semibold transition-all ${
+                authTab === 'login'
+                  ? 'bg-purple-600/40 text-white border-b-2 border-purple-400'
+                  : 'text-purple-300 hover:bg-purple-800/20'
+              }`}
+            >
+              Нэвтрэх
             </button>
-            <button onClick={handleRegister} disabled={authLoading}
-              className="flex-1 py-3 bg-purple-500/20 border-2 border-purple-500 rounded-xl font-semibold hover:bg-purple-500/30 hover:-translate-y-0.5 transition-all disabled:opacity-50">
+            <button
+              onClick={() => setAuthTab('register')}
+              className={`flex-1 py-4 font-semibold transition-all ${
+                authTab === 'register'
+                  ? 'bg-purple-600/40 text-white border-b-2 border-purple-400'
+                  : 'text-purple-300 hover:bg-purple-800/20'
+              }`}
+            >
               Бүртгүүлэх
             </button>
           </div>
-          <div className="text-center text-sm text-purple-300 space-y-1">
-            <p>💫 Хялбараар нэвтрэх, бүртгүүлэх боломжтой</p>
-            <p>🔐 Таны мэдээлэл найдвартай хадгалагдана</p>
+
+          {/* Tab Content */}
+          <div className="p-8">
+            <div className="flex items-center justify-center gap-2 mb-6">
+              <Star className="w-6 h-6 text-purple-400" />
+              <h3 className="text-2xl font-semibold">
+                {authTab === 'login' ? 'Тавтай морил' : 'Шинэ бүртгэл'}
+              </h3>
+            </div>
+
+            {error && (
+              <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 text-sm animate-shake">
+                {error}
+              </div>
+            )}
+            {success && (
+              <div className="mb-4 p-3 bg-green-500/20 border border-green-500/50 rounded-lg text-green-200 text-sm">
+                {success}
+              </div>
+            )}
+
+            <input
+              type="email"
+              placeholder="И-мэйл хаяг"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && (authTab === 'login' ? handleLogin() : handleRegister())}
+              className="w-full px-4 py-3 mb-4 bg-purple-950/60 border-2 border-purple-500/50 rounded-xl text-white placeholder-purple-400 focus:outline-none focus:border-purple-400 focus:ring-4 focus:ring-purple-500/20 transition"
+            />
+
+            <input
+              type="password"
+              placeholder="Нууц үг (багадаа 6 тэмдэгт)"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && (authTab === 'login' ? handleLogin() : handleRegister())}
+              className="w-full px-4 py-3 mb-6 bg-purple-950/60 border-2 border-purple-500/50 rounded-xl text-white placeholder-purple-400 focus:outline-none focus:border-purple-400 focus:ring-4 focus:ring-purple-500/20 transition"
+            />
+
+            {authTab === 'login' ? (
+              <button
+                onClick={handleLogin}
+                disabled={authLoading}
+                className="w-full py-4 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl font-semibold text-lg hover:shadow-lg hover:shadow-purple-500/50 hover:-translate-y-0.5 transition-all disabled:opacity-50"
+              >
+                {authLoading ? 'Түр хүлээнэ үү...' : '🔮 Нэвтрэх'}
+              </button>
+            ) : (
+              <button
+                onClick={handleRegister}
+                disabled={authLoading}
+                className="w-full py-4 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl font-semibold text-lg hover:shadow-lg hover:shadow-purple-500/50 hover:-translate-y-0.5 transition-all disabled:opacity-50"
+              >
+                {authLoading ? 'Түр хүлээнэ үү...' : '✨ Бүртгүүлэх'}
+              </button>
+            )}
+
+            <div className="text-center text-sm text-purple-300 mt-6 space-y-1">
+              <p>💫 Хялбараар нэвтрэх, бүртгүүлэх боломжтой</p>
+              <p>🔐 Таны мэдээлэл найдвартай хадгалагдана</p>
+            </div>
           </div>
         </div>
       ) : (
@@ -120,7 +172,6 @@ const Home = ({
               🎉 Тавтай морил, {user.name}!
             </h3>
 
-            {/* Төлбөрийн статус */}
             {hasPaid ? (
               <div className="mb-5 inline-flex items-center gap-2 px-4 py-2 bg-green-500/20 border border-green-500/40 rounded-full">
                 <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
@@ -149,7 +200,6 @@ const Home = ({
             )}
           </div>
 
-          {/* Үнийн мэдээлэл */}
           {!hasPaid && (
             <div className="bg-purple-900/20 backdrop-blur-lg rounded-2xl p-5 border border-purple-500/20">
               <h4 className="text-purple-200 font-semibold mb-3 text-sm text-center">
