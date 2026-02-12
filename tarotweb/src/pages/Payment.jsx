@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Check, RefreshCw, AlertCircle } from '../icons';
+import { Check, RefreshCw, AlertCircle, Copy } from '../icons';
 import { createQPayInvoice, checkPaymentStatus, PAYMENT_AMOUNT } from '../utils/qpayService';
 
 const Payment = ({ user, onPaymentSuccess, navigateTo }) => {
-  const [step, setStep]         = useState('confirm');  // confirm | waiting | success
+  const [step, setStep]         = useState('confirm');
   const [loading, setLoading]   = useState(false);
   const [checking, setChecking] = useState(false);
   const [qrData, setQrData]     = useState(null);
   const [error, setError]       = useState('');
   const [countdown, setCountdown] = useState(0);
   const [autoCheckCount, setAutoCheckCount] = useState(0);
+  const [accountCopied, setAccountCopied] = useState(false);
 
-  // ── 5 секунд тутамд автомат шалгалт ──
+  // Данс мэдээлэл
+  const ACCOUNT_INFO = {
+    number: '680030003034015815',
+    name: 'БАДАМХАНД НАЙДАН',
+  };
+
   useEffect(() => {
     if (step !== 'waiting' || !qrData?.invoiceId) return;
     const interval = setInterval(async () => {
@@ -26,7 +32,6 @@ const Payment = ({ user, onPaymentSuccess, navigateTo }) => {
     return () => clearInterval(interval);
   }, [step, qrData]);
 
-  // ── Хүчинтэй хугацааны тоолуур ──
   useEffect(() => {
     if (!qrData?.expiresAt) return;
     const interval = setInterval(() => {
@@ -62,9 +67,14 @@ const Payment = ({ user, onPaymentSuccess, navigateTo }) => {
     setChecking(false);
   };
 
+  const copyAccountNumber = () => {
+    navigator.clipboard.writeText(ACCOUNT_INFO.number);
+    setAccountCopied(true);
+    setTimeout(() => setAccountCopied(false), 2000);
+  };
+
   const fmtTime = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 
-  // ══════════════ SUCCESS ══════════════
   if (step === 'success') {
     return (
       <div className="min-h-[80vh] flex items-center justify-center px-4">
@@ -85,14 +95,37 @@ const Payment = ({ user, onPaymentSuccess, navigateTo }) => {
     );
   }
 
-  // ══════════════ QR WAITING ══════════════
   if (step === 'waiting') {
     return (
       <div className="min-h-[80vh] flex items-center justify-center px-4 py-20">
         <div className="max-w-md w-full">
           <div className="bg-purple-900/40 backdrop-blur-lg rounded-3xl p-8 border border-purple-500/30">
 
-            {/* Гарчиг */}
+            {/* Данс мэдээлэл - TOP */}
+            <div className="mb-6 p-4 bg-gradient-to-r from-purple-800/40 to-indigo-800/40 rounded-2xl border border-purple-500/30">
+              <p className="text-purple-300 text-xs text-center mb-2">Хүлээн авагч данс</p>
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex-1">
+                  <p className="font-mono text-lg font-bold text-white tracking-wider">{ACCOUNT_INFO.number}</p>
+                  <p className="text-purple-300 text-sm mt-1">{ACCOUNT_INFO.name}</p>
+                </div>
+                <button
+                  onClick={copyAccountNumber}
+                  className="p-3 bg-purple-700/40 hover:bg-purple-600/40 rounded-xl transition flex-shrink-0"
+                  title="Данс хуулах"
+                >
+                  {accountCopied ? (
+                    <Check className="w-5 h-5 text-green-400" />
+                  ) : (
+                    <Copy className="w-5 h-5 text-purple-300" />
+                  )}
+                </button>
+              </div>
+              {accountCopied && (
+                <p className="text-green-400 text-xs text-center mt-2 animate-pulse">✓ Хуулагдлаа</p>
+              )}
+            </div>
+
             <div className="text-center mb-6">
               <h2 className="text-2xl font-bold text-white mb-1">QPay-ээр төлнө үү</h2>
               <p className="text-purple-300 text-sm">QR кодыг банкны апп-аар уншуулна уу</p>
@@ -103,7 +136,6 @@ const Payment = ({ user, onPaymentSuccess, navigateTo }) => {
               )}
             </div>
 
-            {/* Алдаа */}
             {error && (
               <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-xl flex gap-2">
                 <AlertCircle className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
@@ -111,7 +143,6 @@ const Payment = ({ user, onPaymentSuccess, navigateTo }) => {
               </div>
             )}
 
-            {/* QR блок */}
             <div className="bg-white rounded-2xl p-6 mb-5 text-center shadow-inner">
               {qrData?.qrImage ? (
                 <img
@@ -120,7 +151,6 @@ const Payment = ({ user, onPaymentSuccess, navigateTo }) => {
                   className="mx-auto w-52 h-52"
                 />
               ) : (
-                /* Backend байхгүй үед placeholder */
                 <div className="w-52 h-52 mx-auto bg-gradient-to-br from-purple-100 to-indigo-100 rounded-xl flex flex-col items-center justify-center">
                   <div className="text-5xl mb-2">📱</div>
                   <p className="text-purple-600 text-xs font-medium">QPay апп нээгдэнэ</p>
@@ -133,7 +163,6 @@ const Payment = ({ user, onPaymentSuccess, navigateTo }) => {
               </div>
             </div>
 
-            {/* Банкны апп линкүүд */}
             {qrData?.urls?.length > 0 && (
               <div className="mb-5">
                 <p className="text-purple-400 text-xs text-center mb-3">Банкны апп-аар нэвтрэх:</p>
@@ -154,7 +183,6 @@ const Payment = ({ user, onPaymentSuccess, navigateTo }) => {
               </div>
             )}
 
-            {/* Товчнууд */}
             <div className="space-y-2">
               <button
                 onClick={handleManualCheck}
@@ -183,14 +211,10 @@ const Payment = ({ user, onPaymentSuccess, navigateTo }) => {
     );
   }
 
-  // ══════════════ CONFIRM ══════════════
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
       <div className="max-w-sm w-full">
-
         <div className="bg-purple-900/40 backdrop-blur-lg rounded-3xl overflow-hidden border border-purple-500/30">
-
-          {/* Дээд хэсэг */}
           <div className="bg-gradient-to-br from-purple-700/50 to-indigo-800/50 px-8 pt-10 pb-8 text-center">
             <div className="w-20 h-20 mx-auto mb-4 bg-white/10 backdrop-blur rounded-2xl flex items-center justify-center border border-white/20">
               <span className="text-5xl">🎴</span>
@@ -199,10 +223,9 @@ const Payment = ({ user, onPaymentSuccess, navigateTo }) => {
             <p className="text-purple-200 text-sm">Хөзөр сонгохын тулд төлбөр төлнө үү</p>
           </div>
 
-          {/* Үнэ */}
           <div className="px-8 py-6 border-b border-purple-500/20">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-purple-300">Үйлчилгэй</span>
+              <span className="text-purple-300">Үйлчилгээ</span>
               <span className="text-white font-semibold">1 удаагийн уншлага</span>
             </div>
             <div className="flex items-center justify-between mb-3">
@@ -215,7 +238,6 @@ const Payment = ({ user, onPaymentSuccess, navigateTo }) => {
             </div>
           </div>
 
-          {/* Товч */}
           <div className="px-8 py-6">
             {error && (
               <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-xl flex gap-2">
@@ -248,7 +270,6 @@ const Payment = ({ user, onPaymentSuccess, navigateTo }) => {
           </div>
         </div>
 
-        {/* Мэдээлэл */}
         <div className="mt-4 bg-purple-900/20 rounded-2xl p-5 border border-purple-500/20">
           <h4 className="text-purple-200 font-semibold mb-3 text-sm">📋 Хэрхэн төлөх вэ?</h4>
           <div className="space-y-2">
@@ -265,7 +286,6 @@ const Payment = ({ user, onPaymentSuccess, navigateTo }) => {
             ))}
           </div>
         </div>
-
       </div>
     </div>
   );
