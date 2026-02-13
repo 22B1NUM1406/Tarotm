@@ -32,13 +32,38 @@ app.use(helmet({
   },
 }));
 
-// CORS
+// CORS - Multi-domain support
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'https://suntarot.mn',
+  'https://www.suntarot.mn',
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: (origin, callback) => {
+    // No origin (mobile apps, Postman, server-to-server)
+    if (!origin) return callback(null, true);
+    
+    // Exact match
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    
+    // Wildcard: *.suntarot.mn, *.vercel.app
+    if (origin.endsWith('.suntarot.mn') || origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+    
+    // Block others
+    console.warn(`❌ CORS blocked: ${origin}`);
+    callback(new Error(`CORS not allowed for origin: ${origin}`));
+  },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+console.log('✅ CORS configured for:', allowedOrigins);
 
 // Body parser
 app.use(express.json({ limit: '10mb' }));
