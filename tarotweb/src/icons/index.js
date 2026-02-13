@@ -1,3 +1,4 @@
+import React from 'react';
 // src/icons/index.js
 // Бүх icon-уудыг нэг файлд хадгалах
 export {
