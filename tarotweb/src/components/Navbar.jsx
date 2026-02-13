@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Moon, LogOut, Menu, X } from '../icons';
+import { Moon, LogOut } from '../icons';
+import {Menu, X} from 'lucide-react'
 
 const Navbar = ({ user, currentPage, navigateTo, handleLogout, hasPaid }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
