@@ -15,6 +15,7 @@ const Payment = ({ user, onPaymentSuccess, navigateTo }) => {
   // Данс мэдээлэл
   const ACCOUNT_INFO = {
     number: '680030003034015815',
+    bank: 'Капитрон банк',
     name: 'БАДАМХАНД НАЙДАН',
   };
 
@@ -108,6 +109,7 @@ const Payment = ({ user, onPaymentSuccess, navigateTo }) => {
                 <div className="flex-1">
                   <p className="font-mono text-lg font-bold text-white tracking-wider">{ACCOUNT_INFO.number}</p>
                   <p className="text-purple-300 text-sm mt-1">{ACCOUNT_INFO.name}</p>
+                  <p className="text-purple-300 text-sm mt-1">{ACCOUNT_INFO.bank}</p>
                 </div>
                 <button
                   onClick={copyAccountNumber}
