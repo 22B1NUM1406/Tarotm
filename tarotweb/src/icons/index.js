@@ -45,5 +45,9 @@ export {
   BookOpen,Volume2,
   VolumeX,
   SkipBack,
+  Plus,
+Edit2,
+Trash2,
+Save,
   SkipForward
 } from 'lucide-react';

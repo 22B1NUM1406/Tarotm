@@ -5,7 +5,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const mongoose = require('mongoose');
 require('dotenv').config();
-
+const articlesRoutes = require('./routes/articles');
 // Import routes
 const paymentRoutes = require('./routes/payment');
 const readingRoutes = require('./routes/reading');
@@ -79,6 +79,7 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
+
 // Stricter rate limiting for payment endpoints
 const paymentLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -119,6 +120,7 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/payment', paymentLimiter, paymentRoutes);
 app.use('/api/reading', authMiddleware, readingRoutes);
+app.use('/api/articles', articlesRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {

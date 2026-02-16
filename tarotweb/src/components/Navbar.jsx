@@ -1,19 +1,26 @@
 import React, { useState } from 'react';
 import { Moon, LogOut } from '../icons';
-import {Menu, X} from 'lucide-react'
+import { Menu, X } from 'lucide-react';
 
 const Navbar = ({ user, currentPage, navigateTo, handleLogout, hasPaid }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  const ADMIN_EMAILS = ['admin@suntarot.mn', 'manal0511@gmail.com'];
+  const isAdmin = user && ADMIN_EMAILS.includes(user.email);
 
-  const navItems = [
+  const allNavItems = [
     { id: 'home', label: 'Нүүр' },
     { id: 'information', label: 'Мэдээлэл' },
     { id: 'meditation', label: 'Бясалгал' },
     { id: 'horoscope', label: 'Зурхай' },
     { id: 'blogs', label: 'Блог' },
     { id: 'news', label: 'Мэдээ' },
-    { id: 'about', label: 'Бидний тухай' }
+    { id: 'about', label: 'Бидний тухай' },
+    { id: 'admin', label: '🛠️ Админ', adminOnly: true }
   ];
+
+  // Админ линкийг зөвхөн админд харуулах
+  const navItems = allNavItems.filter(item => !item.adminOnly || isAdmin);
 
   const handleNavClick = (id) => {
     navigateTo(id);

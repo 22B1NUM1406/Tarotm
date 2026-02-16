@@ -11,6 +11,7 @@ import Starfield from './components/Starfield';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import DetailedArticleModal from './components/DetailedArticleModal';
+import Admin from './pages/Admin';
 
 import Home from './pages/Home';
 import Birthdate from './pages/Birthdate';
@@ -187,6 +188,7 @@ const TarotApp = () => {
             handleBirthDateSubmit={handleBirthDateSubmit}
           />
         );
+      case 'admin': return <Admin user={user} navigateTo={navigateTo} />;
       case 'payment':
         return (
           <Payment
