@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Save, X } from '../icons';
-
-// AlertCircle icon - inline
-const AlertCircle = (props) => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-  </svg>
-);
+import { Plus, Edit2, Trash2, Save, X, AlertCircle } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://tarotm-production.up.railway.app';
 
@@ -25,7 +18,6 @@ const Admin = ({ user, navigateTo }) => {
     type: 'news',
   });
 
-  // Админ эсэхийг шалгах
   const ADMIN_EMAILS = ['admin@suntarot.mn', 'manal0511@gmail.com'];
   const isAdmin = user && ADMIN_EMAILS.includes(user.email);
 
@@ -206,7 +198,6 @@ const Admin = ({ user, navigateTo }) => {
   return (
     <div className="min-h-screen px-4 py-20">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-serif font-bold mb-2 text-purple-300">
             🛠️ Админ хяналтын самбар
@@ -214,7 +205,6 @@ const Admin = ({ user, navigateTo }) => {
           <p className="text-purple-400">Мэдээ, блог удирдах</p>
         </div>
 
-        {/* Messages */}
         {error && (
           <div className="mb-4 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 flex items-center gap-2">
             <AlertCircle className="w-5 h-5" />
@@ -227,14 +217,11 @@ const Admin = ({ user, navigateTo }) => {
           </div>
         )}
 
-        {/* Tabs */}
         <div className="flex gap-4 mb-6 flex-wrap">
           <button
             onClick={() => setActiveTab('news')}
             className={`px-6 py-3 rounded-xl font-semibold transition ${
-              activeTab === 'news'
-                ? 'bg-purple-600 text-white'
-                : 'bg-purple-900/40 text-purple-300 hover:bg-purple-800/40'
+              activeTab === 'news' ? 'bg-purple-600 text-white' : 'bg-purple-900/40 text-purple-300 hover:bg-purple-800/40'
             }`}
           >
             📰 Мэдээ ({articles.filter(a => a.type === 'news').length})
@@ -242,9 +229,7 @@ const Admin = ({ user, navigateTo }) => {
           <button
             onClick={() => setActiveTab('blog')}
             className={`px-6 py-3 rounded-xl font-semibold transition ${
-              activeTab === 'blog'
-                ? 'bg-purple-600 text-white'
-                : 'bg-purple-900/40 text-purple-300 hover:bg-purple-800/40'
+              activeTab === 'blog' ? 'bg-purple-600 text-white' : 'bg-purple-900/40 text-purple-300 hover:bg-purple-800/40'
             }`}
           >
             ✍️ Блог ({articles.filter(a => a.type === 'blog').length})
@@ -258,7 +243,6 @@ const Admin = ({ user, navigateTo }) => {
           </button>
         </div>
 
-        {/* Create/Edit Form */}
         {(showForm || editingId) && (
           <div className="mb-6 bg-purple-900/40 backdrop-blur-lg rounded-2xl p-6 border border-purple-500/30">
             <h3 className="text-xl font-semibold mb-4 text-purple-200">
@@ -273,7 +257,7 @@ const Admin = ({ user, navigateTo }) => {
                 className="w-full px-4 py-3 bg-purple-950/60 border-2 border-purple-500/50 rounded-xl text-white placeholder-purple-400 focus:outline-none focus:border-purple-400"
               />
               <textarea
-                placeholder="Товч тайлбар (excerpt)"
+                placeholder="Товч тайлбар"
                 value={formData.excerpt}
                 onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
                 className="w-full px-4 py-3 bg-purple-950/60 border-2 border-purple-500/50 rounded-xl text-white placeholder-purple-400 focus:outline-none focus:border-purple-400"
@@ -306,7 +290,6 @@ const Admin = ({ user, navigateTo }) => {
           </div>
         )}
 
-        {/* Loading */}
         {loading && (
           <div className="text-center py-12">
             <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
@@ -314,7 +297,6 @@ const Admin = ({ user, navigateTo }) => {
           </div>
         )}
 
-        {/* Articles List */}
         {!loading && (
           <div className="space-y-4">
             {filteredArticles.length === 0 ? (
@@ -323,36 +305,22 @@ const Admin = ({ user, navigateTo }) => {
               </div>
             ) : (
               filteredArticles.map((article) => (
-                <div
-                  key={article._id}
-                  className="bg-purple-900/40 backdrop-blur-lg rounded-2xl p-6 border border-purple-500/30 hover:border-purple-400/50 transition"
-                >
+                <div key={article._id} className="bg-purple-900/40 backdrop-blur-lg rounded-2xl p-6 border border-purple-500/30">
                   <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1">
                       <h3 className="text-xl font-semibold text-white mb-2">{article.title}</h3>
-                      <p className="text-purple-300 text-sm mb-3 line-clamp-2">{article.excerpt}</p>
-                      <div className="flex flex-wrap items-center gap-3 text-xs text-purple-400">
+                      <p className="text-purple-300 text-sm mb-3">{article.excerpt}</p>
+                      <div className="flex flex-wrap gap-3 text-xs text-purple-400">
                         <span>📅 {new Date(article.createdAt).toLocaleDateString('mn-MN')}</span>
                         <span>👤 {article.author}</span>
                         <span>📝 {article.type === 'news' ? 'Мэдээ' : 'Блог'}</span>
-                        <span className={article.published ? 'text-green-400' : 'text-yellow-400'}>
-                          {article.published ? '✓ Нийтлэгдсэн' : '⏳ Ноорог'}
-                        </span>
                       </div>
                     </div>
-                    <div className="flex gap-2 flex-shrink-0">
-                      <button
-                        onClick={() => startEdit(article)}
-                        className="p-2 bg-blue-600/20 hover:bg-blue-600/40 rounded-lg transition"
-                        title="Засах"
-                      >
+                    <div className="flex gap-2">
+                      <button onClick={() => startEdit(article)} className="p-2 bg-blue-600/20 hover:bg-blue-600/40 rounded-lg">
                         <Edit2 className="w-5 h-5 text-blue-400" />
                       </button>
-                      <button
-                        onClick={() => handleDelete(article._id)}
-                        className="p-2 bg-red-600/20 hover:bg-red-600/40 rounded-lg transition"
-                        title="Устгах"
-                      >
+                      <button onClick={() => handleDelete(article._id)} className="p-2 bg-red-600/20 hover:bg-red-600/40 rounded-lg">
                         <Trash2 className="w-5 h-5 text-red-400" />
                       </button>
                     </div>
