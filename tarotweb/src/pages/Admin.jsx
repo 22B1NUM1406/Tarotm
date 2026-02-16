@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Save, X } from '../icons';
-import { AlertCircle } from 'lucide-react';
+
+// AlertCircle icon - inline
+const AlertCircle = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+  </svg>
+);
+
 const API_URL = import.meta.env.VITE_API_URL || 'https://tarotm-production.up.railway.app';
 
 const Admin = ({ user, navigateTo }) => {
@@ -19,7 +26,7 @@ const Admin = ({ user, navigateTo }) => {
   });
 
   // Админ эсэхийг шалгах
-  const ADMIN_EMAILS = ['admin@suntarot.mn', 'naidan0511@gmail.com'];
+  const ADMIN_EMAILS = ['admin@suntarot.mn', 'manal0511@gmail.com'];
   const isAdmin = user && ADMIN_EMAILS.includes(user.email);
 
   useEffect(() => {
@@ -34,7 +41,7 @@ const Admin = ({ user, navigateTo }) => {
   const fetchArticles = async () => {
     setLoading(true);
     try {
-      const token = await user.getIdToken?.();
+      const token = await user?.getIdToken?.();
       const res = await fetch(`${API_URL}/api/articles/admin/all`, {
         headers: { 
           'Authorization': `Bearer ${token || localStorage.getItem('firebaseToken')}` 
@@ -60,7 +67,7 @@ const Admin = ({ user, navigateTo }) => {
     }
 
     try {
-      const token = await user.getIdToken?.();
+      const token = await user?.getIdToken?.();
       const res = await fetch(`${API_URL}/api/articles`, {
         method: 'POST',
         headers: {
@@ -87,7 +94,7 @@ const Admin = ({ user, navigateTo }) => {
 
   const handleUpdate = async (id) => {
     try {
-      const token = await user.getIdToken?.();
+      const token = await user?.getIdToken?.();
       const res = await fetch(`${API_URL}/api/articles/${id}`, {
         method: 'PUT',
         headers: {
@@ -116,7 +123,7 @@ const Admin = ({ user, navigateTo }) => {
     if (!window.confirm('Энэ нийтлэлийг устгах уу?')) return;
 
     try {
-      const token = await user.getIdToken?.();
+      const token = await user?.getIdToken?.();
       const res = await fetch(`${API_URL}/api/articles/${id}`, {
         method: 'DELETE',
         headers: {
@@ -159,8 +166,8 @@ const Admin = ({ user, navigateTo }) => {
 
   if (!user) {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center">
-        <div className="text-center bg-purple-900/40 backdrop-blur-lg rounded-2xl p-8 border border-purple-500/30">
+      <div className="min-h-[80vh] flex items-center justify-center px-4">
+        <div className="text-center bg-purple-900/40 backdrop-blur-lg rounded-2xl p-8 border border-purple-500/30 max-w-md">
           <AlertCircle className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
           <h2 className="text-2xl font-semibold mb-2">Нэвтрэх шаардлагатай</h2>
           <p className="text-purple-300 mb-6">Админ хуудас руу нэвтрэхийн тулд эхлээд нэвтэрнэ үү</p>
@@ -177,8 +184,8 @@ const Admin = ({ user, navigateTo }) => {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center">
-        <div className="text-center bg-purple-900/40 backdrop-blur-lg rounded-2xl p-8 border border-purple-500/30">
+      <div className="min-h-[80vh] flex items-center justify-center px-4">
+        <div className="text-center bg-purple-900/40 backdrop-blur-lg rounded-2xl p-8 border border-purple-500/30 max-w-md">
           <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
           <h2 className="text-2xl font-semibold mb-2">Админ эрх шаардлагатай</h2>
           <p className="text-purple-300 mb-2">Зөвхөн админ хэрэглэгчид энэ хуудсанд нэвтрэх эрхтэй.</p>
@@ -320,11 +327,11 @@ const Admin = ({ user, navigateTo }) => {
                   key={article._id}
                   className="bg-purple-900/40 backdrop-blur-lg rounded-2xl p-6 border border-purple-500/30 hover:border-purple-400/50 transition"
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
                       <h3 className="text-xl font-semibold text-white mb-2">{article.title}</h3>
-                      <p className="text-purple-300 text-sm mb-3">{article.excerpt}</p>
-                      <div className="flex items-center gap-4 text-xs text-purple-400">
+                      <p className="text-purple-300 text-sm mb-3 line-clamp-2">{article.excerpt}</p>
+                      <div className="flex flex-wrap items-center gap-3 text-xs text-purple-400">
                         <span>📅 {new Date(article.createdAt).toLocaleDateString('mn-MN')}</span>
                         <span>👤 {article.author}</span>
                         <span>📝 {article.type === 'news' ? 'Мэдээ' : 'Блог'}</span>
@@ -333,7 +340,7 @@ const Admin = ({ user, navigateTo }) => {
                         </span>
                       </div>
                     </div>
-                    <div className="flex gap-2 ml-4">
+                    <div className="flex gap-2 flex-shrink-0">
                       <button
                         onClick={() => startEdit(article)}
                         className="p-2 bg-blue-600/20 hover:bg-blue-600/40 rounded-lg transition"
