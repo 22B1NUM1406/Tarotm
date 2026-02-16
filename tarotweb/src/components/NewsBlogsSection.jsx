@@ -1,76 +1,150 @@
-import React from 'react';
-import { ChevronRight } from '../icons';
-import { NEWS_AND_BLOGS } from '../data/newsBlogs';
+import React, { useState, useEffect } from 'react';
 
-const NewsBlogsSection = ({ activeTab = 'all', setActiveTab = null, onArticleClick = null }) => {
-  const filteredItems = NEWS_AND_BLOGS.filter(item => {
-    if (activeTab === 'all') return true;
-    if (activeTab === 'news') return item.type === 'news';
-    if (activeTab === 'blogs') return item.type === 'blog';
-    return true;
-  });
+const API_URL = import.meta.env.VITE_API_URL || 'https://tarotm-production.up.railway.app';
+
+const NewsBlogsSection = ({ activeTab, setActiveTab, onArticleClick }) => {
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // activeTab: 'all', 'news', 'blogs'
+  const currentType = activeTab === 'all' ? null : activeTab === 'news' ? 'news' : 'blog';
+
+  useEffect(() => {
+    fetchArticles();
+  }, [currentType]);
+
+  const fetchArticles = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const url = currentType 
+        ? `${API_URL}/api/articles?type=${currentType}`
+        : `${API_URL}/api/articles`;
+      
+      const res = await fetch(url);
+      const data = await res.json();
+      
+      if (data.success) {
+        setArticles(data.articles || []);
+      } else {
+        setError('Мэдээ татахад алдаа гарлаа');
+      }
+    } catch (err) {
+      console.error('Fetch articles error:', err);
+      setError('Серверт холбогдох үед алдаа гарлаа');
+    }
+    setLoading(false);
+  };
+
+  if (loading) {
+    return (
+      <div className="text-center py-12">
+        <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+        <p className="text-purple-300">Мэдээ уншиж байна...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12 bg-purple-900/20 rounded-2xl border border-purple-500/20">
+        <p className="text-red-400 mb-4">{error}</p>
+        <button
+          onClick={fetchArticles}
+          className="px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-xl font-semibold transition"
+        >
+          Дахин оролдох
+        </button>
+      </div>
+    );
+  }
+
+  if (articles.length === 0) {
+    return (
+      <div className="text-center py-12 bg-purple-900/20 rounded-2xl border border-purple-500/20">
+        <p className="text-purple-400">
+          Одоогоор {currentType === 'news' ? 'мэдээ' : currentType === 'blog' ? 'блог' : 'нийтлэл'} байхгүй байна
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div>
+      {/* Tabs - зөвхөн setActiveTab байвал харуулах */}
       {setActiveTab && (
-        <div className="flex justify-center mb-6">
-          <div className="inline-flex bg-purple-900/40 backdrop-blur-sm rounded-xl p-1">
-            {['all', 'news', 'blogs'].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-6 py-2 rounded-lg transition-all ${
-                  activeTab === tab 
-                    ? 'bg-purple-600 text-white' 
-                    : 'text-purple-300 hover:text-purple-100'
-                }`}
-              >
-                {tab === 'all' && 'Бүгд'}
-                {tab === 'news' && 'Мэдээ'}
-                {tab === 'blogs' && 'Блогууд'}
-              </button>
-            ))}
-          </div>
+        <div className="flex gap-4 mb-8 justify-center flex-wrap">
+          <button
+            onClick={() => setActiveTab('all')}
+            className={`px-6 py-3 rounded-xl font-semibold transition ${
+              activeTab === 'all'
+                ? 'bg-purple-600 text-white'
+                : 'bg-purple-900/40 text-purple-300 hover:bg-purple-800/40'
+            }`}
+          >
+            🌟 Бүгд
+          </button>
+          <button
+            onClick={() => setActiveTab('news')}
+            className={`px-6 py-3 rounded-xl font-semibold transition ${
+              activeTab === 'news'
+                ? 'bg-purple-600 text-white'
+                : 'bg-purple-900/40 text-purple-300 hover:bg-purple-800/40'
+            }`}
+          >
+            📰 Мэдээ
+          </button>
+          <button
+            onClick={() => setActiveTab('blogs')}
+            className={`px-6 py-3 rounded-xl font-semibold transition ${
+              activeTab === 'blogs'
+                ? 'bg-purple-600 text-white'
+                : 'bg-purple-900/40 text-purple-300 hover:bg-purple-800/40'
+            }`}
+          >
+            ✍️ Блог
+          </button>
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {filteredItems.map((item) => (
-          <div 
-            key={item.id} 
-            className="bg-purple-900/40 backdrop-blur-lg rounded-2xl overflow-hidden border border-purple-500/30 hover:border-purple-400 hover:-translate-y-1 transition-all group cursor-pointer"
-            onClick={() => onArticleClick && onArticleClick(item)}
+      {/* Articles Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {articles.map((article) => (
+          <div
+            key={article._id}
+            onClick={() => onArticleClick?.(article)}
+            className="bg-purple-900/40 backdrop-blur-lg rounded-2xl overflow-hidden border border-purple-500/30 hover:border-purple-400/50 transition cursor-pointer group"
           >
-            <div className="p-5">
-              <div className="flex items-center justify-between mb-2">
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                  item.type === 'news' 
-                    ? 'bg-blue-500/90 text-white' 
-                    : 'bg-pink-500/90 text-white'
-                }`}>
-                  {item.type === 'news' ? 'Мэдээ' : 'Блог'}
-                </span>
-                <span className="text-purple-400 text-xs">{item.date}</span>
+            {article.imageUrl && (
+              <div className="aspect-video bg-purple-800/40 overflow-hidden">
+                <img
+                  src={article.imageUrl}
+                  alt={article.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition"
+                />
               </div>
-              
-              <h3 className="text-lg font-semibold text-white mb-3">
-                {item.title}
+            )}
+            <div className="p-6">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-xs px-3 py-1 bg-purple-600/40 rounded-full text-purple-200">
+                  {article.type === 'news' ? '📰 Мэдээ' : '✍️ Блог'}
+                </span>
+                <span className="text-xs text-purple-400">
+                  {new Date(article.createdAt).toLocaleDateString('mn-MN')}
+                </span>
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-purple-300 transition line-clamp-2">
+                {article.title}
               </h3>
-              
-              <p className="text-purple-300 text-sm mb-4 line-clamp-3">
-                {item.description}
+              <p className="text-purple-300 text-sm line-clamp-3 mb-4">
+                {article.excerpt}
               </p>
-              
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 text-xs">
-                  <span className="text-purple-400">{item.readTime} уншихад</span>
-                  <span className="text-purple-400">•</span>
-                  <span className="text-purple-400">{item.views} үзсэн</span>
-                </div>
-                <div className="flex items-center text-purple-300 hover:text-purple-100 text-sm font-medium transition-colors">
-                  Дэлгэрэнгүй
-                  <ChevronRight className="w-4 h-4 ml-1" />
-                </div>
+              <div className="flex items-center justify-between text-xs text-purple-400">
+                <span>👤 {article.author}</span>
+                <button className="text-purple-400 hover:text-purple-300 transition">
+                  Дэлгэрэнгүй →
+                </button>
               </div>
             </div>
           </div>
