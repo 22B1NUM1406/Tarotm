@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Save, X, AlertCircle } from 'lucide-react';
+import { auth } from '../data/firebaseConfig';
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://tarotm-production.up.railway.app';
 
@@ -21,6 +22,21 @@ const Admin = ({ user, navigateTo }) => {
   const ADMIN_EMAILS = ['admin@suntarot.mn', 'manal0511@gmail.com'];
   const isAdmin = user && ADMIN_EMAILS.includes(user.email);
 
+  // Firebase token авах helper
+  const getAuthToken = async () => {
+    try {
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        const token = await currentUser.getIdToken();
+        return token;
+      }
+      return localStorage.getItem('firebaseToken');
+    } catch (err) {
+      console.error('Token авахад алдаа:', err);
+      return localStorage.getItem('firebaseToken');
+    }
+  };
+
   useEffect(() => {
     if (!isAdmin) {
       setError('❌ Админ эрх шаардлагатай');
@@ -33,20 +49,28 @@ const Admin = ({ user, navigateTo }) => {
   const fetchArticles = async () => {
     setLoading(true);
     try {
-      const token = await user?.getIdToken?.();
+      const token = await getAuthToken();
+      if (!token) {
+        setError('Нэвтрэх шаардлагатай');
+        setLoading(false);
+        return;
+      }
+
       const res = await fetch(`${API_URL}/api/articles/admin/all`, {
         headers: { 
-          'Authorization': `Bearer ${token || localStorage.getItem('firebaseToken')}` 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       });
       const data = await res.json();
+      
       if (data.success) {
         setArticles(data.articles);
       } else {
-        setError(data.message);
+        setError(data.message || 'Нийтлэл татахад алдаа гарлаа');
       }
     } catch (err) {
-      setError('Нийтлэл татахад алдаа гарлаа');
+      setError('Сервертэй холбогдох үед алдаа гарлаа');
       console.error(err);
     }
     setLoading(false);
@@ -59,12 +83,17 @@ const Admin = ({ user, navigateTo }) => {
     }
 
     try {
-      const token = await user?.getIdToken?.();
+      const token = await getAuthToken();
+      if (!token) {
+        setError('Нэвтрэх шаардлагатай');
+        return;
+      }
+
       const res = await fetch(`${API_URL}/api/articles`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token || localStorage.getItem('firebaseToken')}`,
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       });
@@ -76,7 +105,7 @@ const Admin = ({ user, navigateTo }) => {
         setShowForm(false);
         fetchArticles();
       } else {
-        setError(data.message);
+        setError(data.message || 'Алдаа гарлаа');
       }
     } catch (err) {
       setError('Алдаа гарлаа');
@@ -86,12 +115,17 @@ const Admin = ({ user, navigateTo }) => {
 
   const handleUpdate = async (id) => {
     try {
-      const token = await user?.getIdToken?.();
+      const token = await getAuthToken();
+      if (!token) {
+        setError('Нэвтрэх шаардлагатай');
+        return;
+      }
+
       const res = await fetch(`${API_URL}/api/articles/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token || localStorage.getItem('firebaseToken')}`,
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       });
@@ -103,7 +137,7 @@ const Admin = ({ user, navigateTo }) => {
         setFormData({ title: '', excerpt: '', content: '', type: 'news' });
         fetchArticles();
       } else {
-        setError(data.message);
+        setError(data.message || 'Алдаа гарлаа');
       }
     } catch (err) {
       setError('Алдаа гарлаа');
@@ -115,11 +149,17 @@ const Admin = ({ user, navigateTo }) => {
     if (!window.confirm('Энэ нийтлэлийг устгах уу?')) return;
 
     try {
-      const token = await user?.getIdToken?.();
+      const token = await getAuthToken();
+      if (!token) {
+        setError('Нэвтрэх шаардлагатай');
+        return;
+      }
+
       const res = await fetch(`${API_URL}/api/articles/${id}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${token || localStorage.getItem('firebaseToken')}`,
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       });
       const data = await res.json();
@@ -128,7 +168,7 @@ const Admin = ({ user, navigateTo }) => {
         setSuccess('✅ Нийтлэл устгагдлаа');
         fetchArticles();
       } else {
-        setError(data.message);
+        setError(data.message || 'Алдаа гарлаа');
       }
     } catch (err) {
       setError('Алдаа гарлаа');
